@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M&C — Notre archive officielle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script src="https://cdn.jsdelivr.net/npm/exifr@7/dist/lite.umd.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── PASSWORD SCREEN ── */
+  #passwordScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: #1a1f1a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    padding: 2rem;
+    transition: opacity 0.5s ease;
+  }
+
+  #passwordScreen.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #passwordScreen .lock-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    font-weight: 300;
+    color: #e8ede8;
+    text-align: center;
+    line-height: 1.1;
+  }
+
+  #passwordScreen .lock-title em {
+    font-style: italic;
+    color: #7aab7a;
+  }
+
+  #passwordScreen .lock-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: #6a876a;
+  }
+
+  .lock-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .lock-input {
+    width: 100%;
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-weight: 300;
+    letter-spacing: 0.4em;
+    border: none;
+    border-bottom: 1px solid #3d4f3d;
+    background: none;
+    color: #e8ede8;
+    padding: 0.4rem 0;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .lock-input:focus { border-color: #7aab7a; }
+
+  .lock-input.error {
+    border-color: #c0392b;
+    animation: shake 0.35s ease;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-7px); }
+    75% { transform: translateX(7px); }
+  }
+
+  .lock-btn {
+    background: #7aab7a;
+    color: #f7f2ea;
+    border: none;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.75rem 2rem;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 100%;
+  }
+
+  .lock-btn:hover { background: #a0c8a0; }
+
+  .lock-error {
+    font-size: 0.75rem;
+    color: #c0392b;
+    letter-spacing: 0.05em;
+    opacity: 0;
+    transition: opacity 0.2s;
+    min-height: 1rem;
+  }
+
+  .lock-error.visible { opacity: 1; }
+
+  :root {
+    --cream: #1a1f1a;
+    --warm: #222922;
+    --sand: #3d4f3d;
+    --terracotta: #7aab7a;
+    --brown: #a0c8a0;
+    --dark: #e8ede8;
+    --text: #c8d4c8;
+    --muted: #6a876a;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--text);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: var(--cream);
+    border-bottom: 1px solid var(--warm);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+
+  .site-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--brown);
+    letter-spacing: 0.02em;
+  }
+
+  .site-title span {
+    font-style: normal;
+    font-weight: 400;
+    color: var(--terracotta);
+  }
+
+  /* ── YEAR NAV ── */
+  .year-nav {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .year-nav::-webkit-scrollbar { display: none; }
+
+  .year-nav a {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 0.2rem 0;
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+  }
+  .year-nav a:hover,
+  .year-nav a.active {
+    color: var(--terracotta);
+    border-color: var(--terracotta);
+  }
+
+  /* ── UPLOAD TOGGLE ── */
+  .upload-toggle {
+    background: none;
+    border: 1px solid var(--sand);
+    color: var(--muted);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.4rem 0.9rem;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .upload-toggle:hover {
+    background: var(--terracotta);
+    border-color: var(--terracotta);
+    color: var(--cream);
+  }
+
+  /* ── HERO ── */
+  .hero {
+    margin-top: 64px;
+    padding: 5rem 2rem 3rem;
+    text-align: center;
+    background: linear-gradient(to bottom, #222922 0%, #1a1f1a 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(122,171,122,0.08) 0%, transparent 70%);
+  }
+
+  .hero-eyebrow {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 1.2rem;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 300;
+    line-height: 1;
+    color: var(--dark);
+    margin-bottom: 1rem;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--terracotta);
+  }
+
+  .hero-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 400px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* ── MAIN ── */
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 2rem 6rem;
+  }
+
+  /* ── YEAR SECTION ── */
+  .year-section {
+    margin-bottom: 5rem;
+    opacity: 0;
+    transform: translateY(24px);
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .year-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--warm);
+  }
+
+  .year-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--terracotta);
+    line-height: 1;
+  }
+
+  .year-count {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--sand);
+  }
+
+  /* ── MEDIA GRID ── */
+  .media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.6rem;
+  }
+
+  .media-grid .span-2 {
+    grid-column: span 2;
+  }
+  .media-grid .span-tall {
+    grid-row: span 2;
+  }
+
+  /* ── MEDIA ITEM ── */
+  .media-item {
+    position: relative;
+    background: var(--warm);
+    border-radius: 3px;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .media-item.tall { aspect-ratio: 3/4; }
+  .media-item.wide { aspect-ratio: 16/9; }
+  .media-item.square { aspect-ratio: 1; }
+
+  .media-item:hover {
+    transform: scale(1.015);
+    box-shadow: 0 8px 32px rgba(10,14,10,0.4);
+    z-index: 2;
+  }
+
+  .media-item img,
+  .media-item video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* ── PLACEHOLDER ── */
+  .placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 1.5px dashed var(--sand);
+    border-radius: 3px;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .placeholder:hover {
+    border-color: var(--terracotta);
+    background: rgba(181,113,74,0.04);
+  }
+
+  .placeholder input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .placeholder-icon {
+    font-size: 1.4rem;
+    opacity: 0.4;
+  }
+
+  .placeholder-text {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--sand);
+  }
+
+  /* ── CAPTION ── */
+  .caption {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(to top, rgba(44,31,21,0.7) 0%, transparent 100%);
+    padding: 1.5rem 0.75rem 0.6rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .media-item:hover .caption { opacity: 1; }
+
+  .caption-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: rgba(247,242,234,0.9);
+    line-height: 1.3;
+  }
+
+  .caption-date {
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    color: rgba(247,242,234,0.6);
+    margin-top: 0.2rem;
+  }
+
+  /* ── VIDEO BADGE ── */
+  .video-badge {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: rgba(10,14,10,0.6);
+    color: var(--cream);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.5rem;
+    border-radius: 2px;
+    backdrop-filter: blur(4px);
+  }
+
+  /* ── ADD MEDIA BTN ── */
+  .add-media-btn {
+    margin-top: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: 1px solid var(--warm);
+    color: var(--muted);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.5rem 1rem;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .add-media-btn input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .add-media-btn:hover {
+    border-color: var(--terracotta);
+    color: var(--terracotta);
+  }
+
+  /* ── ADD YEAR ── */
+  .add-year-section {
+    text-align: center;
+    padding: 3rem 0;
+    border-top: 1px solid var(--warm);
+  }
+
+  .add-year-form {
+    display: none;
+    gap: 0.75rem;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  .add-year-form.visible { display: flex; }
+
+  .add-year-form input {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 300;
+    border: none;
+    border-bottom: 1px solid var(--sand);
+    background: none;
+    color: var(--dark);
+    text-align: center;
+    width: 120px;
+    outline: none;
+    padding: 0.2rem 0;
+  }
+
+  .add-year-form input::placeholder { color: var(--sand); }
+
+  .btn-primary {
+    background: var(--terracotta);
+    color: var(--cream);
+    border: none;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.6rem 1.4rem;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-primary:hover { background: var(--brown); }
+
+  .btn-ghost {
+    background: none;
+    color: var(--muted);
+    border: 1px solid var(--warm);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.5rem 1rem;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-ghost:hover { border-color: var(--sand); color: var(--text); }
+
+  /* ── LIGHTBOX ── */
+  .lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(10,14,10,0.94);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    backdrop-filter: blur(6px);
+  }
+
+  .lightbox.open { display: flex; }
+
+  .lightbox-media {
+    max-width: 90vw;
+    max-height: 80vh;
+    border-radius: 3px;
+    object-fit: contain;
+  }
+
+  .lightbox-close {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: none;
+    border: none;
+    color: rgba(247,242,234,0.6);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.2s;
+    line-height: 1;
+  }
+  .lightbox-close:hover { color: var(--cream); }
+
+  .lightbox-caption {
+    margin-top: 1rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: rgba(247,242,234,0.7);
+    text-align: center;
+  }
+
+  .lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: rgba(247,242,234,0.5);
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 1rem;
+    transition: color 0.2s;
+  }
+  .lightbox-nav:hover { color: var(--cream); }
+  .lightbox-nav.prev { left: 1rem; }
+  .lightbox-nav.next { right: 1rem; }
+
+  /* ── ADMIN MODE ── */
+  body.admin-mode .add-media-btn { display: inline-flex; }
+  body:not(.admin-mode) .add-media-btn { display: none; }
+  body.admin-mode .placeholder { pointer-events: all; }
+  body:not(.admin-mode) .placeholder { pointer-events: none; border: none; background: var(--warm); }
+  body:not(.admin-mode) .placeholder .placeholder-icon,
+  body:not(.admin-mode) .placeholder .placeholder-text { display: none; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    border-top: 1px solid var(--warm);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--sand);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .year-nav { display: none; }
+    .media-grid { grid-template-columns: repeat(2, 1fr); gap: 0.4rem; }
+    .media-grid .span-2 { grid-column: span 1; }
+    .hero-title { font-size: 3rem; }
+    .year-label { font-size: 2.5rem; }
+    .site-header { padding: 0 1rem; }
+    main { padding: 1rem 1rem 4rem; }
+  }
+
+  /* ── ANIMATIONS ── */
+  .year-section:nth-child(1) { animation-delay: 0.1s; }
+  .year-section:nth-child(2) { animation-delay: 0.2s; }
+  .year-section:nth-child(3) { animation-delay: 0.3s; }
+  .year-section:nth-child(4) { animation-delay: 0.4s; }
+  .year-section:nth-child(5) { animation-delay: 0.5s; }
+
+  /* ── WELCOME POPUP ── */
+  #welcomePopup {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: rgba(10,14,10,0.6);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+  }
+
+  #welcomePopup.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .popup-card {
+    background: var(--cream);
+    border-radius: 4px;
+    max-width: 420px;
+    width: 100%;
+    padding: 3rem 2.5rem 2rem;
+    text-align: center;
+    position: relative;
+    transform: translateY(12px);
+    transition: transform 0.5s ease;
+    box-shadow: 0 24px 64px rgba(10,14,10,0.5);
+  }
+
+  #welcomePopup.visible .popup-card {
+    transform: translateY(0);
+  }
+
+  .popup-close {
+    position: absolute;
+    top: 1rem; right: 1.2rem;
+    background: none;
+    border: none;
+    color: var(--sand);
+    font-size: 1.1rem;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+  .popup-close:hover { color: var(--text); }
+
+  .popup-eyebrow {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 1rem;
+  }
+
+  .popup-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.4rem;
+    font-weight: 300;
+    color: var(--dark);
+    line-height: 1.1;
+    margin-bottom: 1.2rem;
+  }
+
+  .popup-title em { font-style: italic; color: var(--terracotta); }
+
+  .popup-body {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 2rem;
+  }
+
+  .popup-btn {
+    background: var(--terracotta);
+    color: var(--cream);
+    border: none;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.75rem 2.5rem;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .popup-btn:hover { background: var(--brown); }
+
+  /* ── PHOTO DU JOUR ── */
+  .daily-photo-section {
+    margin: 0 auto 4rem;
+    max-width: 700px;
+    padding: 0 2rem;
+  }
+
+  .daily-label {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .daily-frame {
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--warm);
+    aspect-ratio: 3/2;
+  }
+
+  .daily-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .daily-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(to top, rgba(44,31,21,0.75) 0%, transparent 100%);
+    padding: 2.5rem 1.5rem 1.2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .daily-caption-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: rgba(247,242,234,0.9);
+    line-height: 1.4;
+  }
+
+  .daily-date {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(247,242,234,0.65);
+    white-space: nowrap;
+    margin-left: 1rem;
+    flex-shrink: 0;
+  }
+
+  .daily-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--sand);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1rem;
+  }
+
+
+  /* ── IMPORT GLOBAL ── */
+  .global-import-bar {
+    display: none;
+    text-align: center;
+    padding: 1.5rem 2rem;
+    background: var(--warm);
+    border-bottom: 1px solid var(--sand);
+    position: sticky;
+    top: 64px;
+    z-index: 90;
+  }
+
+  body.admin-mode .global-import-bar { display: block; }
+
+  .global-import-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .global-import-label {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .global-import-btn {
+    background: var(--terracotta);
+    color: var(--cream);
+    border: none;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.6rem 1.4rem;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .global-import-btn input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .global-import-btn:hover { background: var(--brown); }
+
+  /* Progress bar */
+  .import-progress {
+    display: none;
+    width: 100%;
+    max-width: 400px;
+    margin: 0.75rem auto 0;
+  }
+
+  .import-progress.visible { display: block; }
+
+  .progress-bar-track {
+    height: 2px;
+    background: var(--sand);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--terracotta);
+    border-radius: 1px;
+    width: 0%;
+    transition: width 0.2s ease;
+  }
+
+  .progress-text {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-top: 0.4rem;
+    text-align: center;
+  }
+
+  /* ── POPUP ANNÉE MANQUANTE ── */
+  #yearPickerPopup {
+    position: fixed;
+    inset: 0;
+    z-index: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: rgba(10,14,10,0.6);
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  #yearPickerPopup.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .year-picker-card {
+    background: var(--cream);
+    border-radius: 4px;
+    max-width: 360px;
+    width: 100%;
+    padding: 2.5rem 2rem 2rem;
+    text-align: center;
+    box-shadow: 0 16px 48px rgba(10,14,10,0.5);
+  }
+
+  .year-picker-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 300;
+    color: var(--dark);
+    margin-bottom: 0.5rem;
+  }
+
+  .year-picker-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+
+  .year-picker-filename {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    color: var(--terracotta);
+    background: var(--warm);
+    padding: 0.4rem 0.8rem;
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .year-picker-select {
+    width: 100%;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 300;
+    border: none;
+    border-bottom: 1px solid var(--sand);
+    background: none;
+    color: var(--dark);
+    text-align: center;
+    padding: 0.3rem 0;
+    outline: none;
+    margin-bottom: 1.5rem;
+    cursor: pointer;
+  }
+
+  .year-picker-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+  }
+
+</style>
+
+<script>
+// ─── CONFIG ──────────────────────────────────────────────────────
+const CLD_CLOUD = "dayi1mq7p";
+const CLD_PRESET = "mc-archive";
+const CLD_BASE_URL = `https://api.cloudinary.com/v1_1/${CLD_CLOUD}`;
+
+const JSONBIN_ID = "6a013aaec0954111d805bf21";
+const JSONBIN_KEY = "$2a$10$4Hz/UUK6RZsvPvHvLOfre..2w/um9CLvVlTxkD/DMATQltcgbIq1y";
+const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
+
+// ─── MANIFEST (JSONBin) ───────────────────────────────────────────
+async function loadManifest() {
+  try {
+    const res = await fetch(`${JSONBIN_URL}/latest`, {
+      headers: { 'X-Master-Key': JSONBIN_KEY }
+    });
+    if (!res.ok) return {};
+    const data = await res.json();
+    return data.record || {};
+  } catch(e) { return {}; }
+}
+
+async function saveManifest(data) {
+  try { localStorage.setItem('mc_manifest_cache', JSON.stringify(data)); } catch(e) {}
+  try {
+    await fetch(JSONBIN_URL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': JSONBIN_KEY
+      },
+      body: JSON.stringify(data)
+    });
+  } catch(e) { console.error('Manifest save error', e); }
+}
+
+// ─── UPLOAD MEDIA (Cloudinary) ────────────────────────────────────
+async function uploadMediaToCloudinary(file, onProgress) {
+  const isVideo = file.type.startsWith('video');
+  const resourceType = isVideo ? 'video' : 'image';
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('upload_preset', CLD_PRESET);
+
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `${CLD_BASE_URL}/${resourceType}/upload`);
+    xhr.upload.onprogress = e => {
+      if (e.lengthComputable && onProgress) onProgress(e.loaded / e.total);
+    };
+    xhr.onload = () => {
+      try { resolve(JSON.parse(xhr.responseText)); }
+      catch(e) { reject(e); }
+    };
+    xhr.onerror = reject;
+    xhr.send(fd);
+  });
+}
+</script>
+
+</head>
+<body>
+
+<!-- PASSWORD SCREEN -->
+<div id="passwordScreen">
+  <div>
+    <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;color:#7aab7a;text-align:center;margin-bottom:1.2rem;letter-spacing:0.02em;">Pour que rien ne disparaisse vraiment.</p>
+    <h1 class="lock-title">M<em>&</em>C</h1>
+  </div>
+  <p class="lock-sub">Entre le mot de passe pour voyager dans le temps.</p>
+  <div class="lock-form">
+    <input class="lock-input" id="lockInput" type="password" placeholder="••••••" maxlength="30" onkeydown="if(event.key==='Enter') checkPassword()">
+    <div class="lock-error" id="lockError">Mot de passe incorrect.</div>
+    <button class="lock-btn" onclick="checkPassword()">Entrer</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="site-title">M&C — <span>Toi, Moi, Nous</span></div>
+  <nav class="year-nav" id="yearNav"></nav>
+  <button class="upload-toggle" id="adminToggle" onclick="toggleAdmin()">✦ Gérer</button>
+  <button class="upload-toggle" id="logoutBtn" onclick="logout()" style="border-color:var(--sand);color:var(--muted);">↩ Quitter</button>
+</header>
+
+
+<!-- IMPORT GLOBAL -->
+<div class="global-import-bar" id="globalImportBar">
+  <div class="global-import-inner">
+    <span class="global-import-label">Import en masse</span>
+    <label class="global-import-btn">
+      <input type="file" accept="image/*,video/*" multiple onchange="importAllFiles(this)">
+      ✦ Importer des photos & vidéos
+    </label>
+  </div>
+  <div class="import-progress" id="importProgress">
+    <div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
+    <div class="progress-text" id="progressText"></div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <p class="hero-eyebrow">Notre archive officielle</p>
+  <h1 class="hero-title">M<em>&</em>C</h1>
+  <p class="hero-sub">Tout est là, intact.</p>
+</div>
+
+
+<!-- WELCOME POPUP -->
+<div id="welcomePopup">
+  <div class="popup-card">
+    <button class="popup-close" onclick="closePopup()">✕</button>
+    <p class="popup-eyebrow">Hey</p>
+    <h2 class="popup-title"><em>M&C</em></h2>
+    <p class="popup-body">
+      Tout sera là pour toi quand tu le voudras.
+    </p>
+    <button class="popup-btn" onclick="closePopup()">Voir les photos</button>
+  </div>
+</div>
+
+
+<!-- PHOTO DU JOUR -->
+<div class="daily-photo-section" id="dailyPhotoSection" style="display:none;">
+  <p class="daily-label">✦ Photo du jour</p>
+  <div class="daily-frame" id="dailyFrame">
+    <div class="daily-empty">Les souvenirs s'afficheront ici une fois les photos ajoutées.</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main id="albumMain"></main>
+
+<!-- ADD YEAR -->
+<div class="add-year-section" id="addYearSection" style="display:none;">
+  <button class="btn-ghost" onclick="document.getElementById('addYearForm').classList.toggle('visible')">+ Ajouter une année</button>
+  <div class="add-year-form" id="addYearForm">
+    <input type="number" id="newYearInput" placeholder="2015" min="1990" max="2030">
+    <button class="btn-primary" onclick="addYear()">Créer</button>
+  </div>
+</div>
+
+
+<!-- YEAR PICKER POPUP -->
+<div id="yearPickerPopup">
+  <div class="year-picker-card">
+    <h3 class="year-picker-title">Année introuvable</h3>
+    <p class="year-picker-sub">Cette photo n'a pas de date dans ses métadonnées.<br>Dans quelle année veux-tu la placer ?</p>
+    <div class="year-picker-filename" id="yearPickerFilename"></div>
+    <select class="year-picker-select" id="yearPickerSelect">
+      <option value="2023">2023</option>
+      <option value="2024">2024</option>
+      <option value="2025">2025</option>
+      <option value="2026">2026</option>
+    </select>
+    <div class="year-picker-actions">
+      <button class="btn-ghost" onclick="skipYearPicker()">Ignorer</button>
+      <button class="btn-primary" onclick="confirmYearPicker()">Ajouter</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <button class="lightbox-nav prev" onclick="navigateLightbox(-1)">‹</button>
+  <img id="lightboxImg" class="lightbox-media" src="" alt="" style="display:none;">
+  <video id="lightboxVideo" class="lightbox-media" controls style="display:none;"></video>
+  <div id="lightboxCaption" class="lightbox-caption"></div>
+  <button class="lightbox-nav next" onclick="navigateLightbox(1)">›</button>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  Les photos sont là.
+</footer>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────
+let albumData = {};
+
+async function loadData() {
+  // Charger depuis le cache localStorage d'abord (affichage immédiat)
+  try {
+    const cache = localStorage.getItem('mc_manifest_cache');
+    if (cache) {
+      albumData = JSON.parse(cache);
+      render();
+      renderDailyPhoto();
+    }
+  } catch(e) {}
+
+  // Puis charger depuis Cloudinary (source de vérité)
+  const manifest = await loadManifest();
+  if (manifest && Object.keys(manifest).length) {
+    albumData = manifest;
+  } else if (!Object.keys(albumData).length) {
+    // Première fois — structure initiale
+    albumData = {
+      "2023": { medias: [] },
+      "2024": { medias: [] },
+      "2025": { medias: [] },
+      "2026": { medias: [] },
+    };
+  }
+  render();
+  renderDailyPhoto();
+}
+
+async function saveData() {
+  try { localStorage.setItem('mc_manifest_cache', JSON.stringify(albumData)); } catch(e) {}
+  await saveManifest(albumData);
+}
+
+// ─── RENDER ─────────────────────────────────────────────────────
+let allMediaItems = []; // Pour la lightbox
+
+function render() {
+  const main = document.getElementById('albumMain');
+  const nav = document.getElementById('yearNav');
+  main.innerHTML = '';
+  nav.innerHTML = '';
+  allMediaItems = [];
+
+  const years = Object.keys(albumData).sort();
+
+  years.forEach((year, yi) => {
+    // Nav link
+    const a = document.createElement('a');
+    a.href = '#year-' + year;
+    a.textContent = year;
+    a.dataset.year = year;
+    nav.appendChild(a);
+
+    // Section
+    const section = document.createElement('section');
+    section.className = 'year-section';
+    section.id = 'year-' + year;
+    section.style.animationDelay = (yi * 0.1) + 's';
+
+    const medias = albumData[year].medias || [];
+    const filled = medias.filter(m => m !== null).length;
+
+    section.innerHTML = `
+      <div class="year-header">
+        <span class="year-label">${year}</span>
+        <span class="year-count">${filled} souvenir${filled !== 1 ? 's' : ''}</span>
+      </div>
+      <div class="media-grid" id="grid-${year}"></div>
+      <label class="add-media-btn">
+        <input type="file" accept="image/*,video/*" multiple onchange="addMediaToYear('${year}', this)">
+        + Ajouter des photos / vidéos
+      </label>
+    `;
+
+    main.appendChild(section);
+
+    // Grid items
+    const grid = document.getElementById('grid-' + year);
+    medias.forEach((media, idx) => {
+      const item = createMediaItem(media, year, idx, medias.length);
+      grid.appendChild(item);
+      if (media) {
+        allMediaItems.push({ year, idx, src: media.src, type: media.type, caption: media.caption });
+      }
+    });
+  });
+
+  // Add year section
+  const addSection = document.getElementById('addYearSection');
+  addSection.style.display = document.body.classList.contains('admin-mode') ? 'block' : 'none';
+
+  updateNavActive();
+}
+
+// ─── MEDIA ITEM ─────────────────────────────────────────────────
+function createMediaItem(media, year, idx, total) {
+  const item = document.createElement('div');
+  // Alternate layout pour la variété visuelle
+  const shapes = ['', 'square', 'tall', '', 'wide', ''];
+  item.className = 'media-item ' + shapes[idx % shapes.length];
+
+  if (media) {
+    if (media.type === 'video') {
+      item.innerHTML = `
+        <video src="${media.src}" muted loop playsinline preload="metadata"></video>
+        <span class="video-badge">▶ Vidéo</span>
+        <div class="caption">
+          <div class="caption-text">${media.caption || ''}</div>
+          <div class="caption-date">${media.date || ''}</div>
+        </div>
+      `;
+      const video = item.querySelector('video');
+      item.addEventListener('mouseenter', () => video.play());
+      item.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; });
+    } else {
+      item.innerHTML = `
+        <img src="${media.src}" alt="${media.caption || ''}">
+        <div class="caption">
+          <div class="caption-text">${media.caption || ''}</div>
+          <div class="caption-date">${media.date || ''}</div>
+        </div>
+      `;
+    }
+    const lbIdx = allMediaItems.length; // sera poussé après
+    item.addEventListener('click', () => openLightbox(year, idx));
+  } else {
+    // Placeholder
+    item.innerHTML = `
+      <label class="placeholder">
+        <input type="file" accept="image/*,video/*" onchange="fillPlaceholder('${year}', ${idx}, this)">
+        <span class="placeholder-icon">＋</span>
+        <span class="placeholder-text">Ajouter</span>
+      </label>
+    `;
+  }
+
+  return item;
+}
+
+// ─── MOT DE PASSE ────────────────────────────────────────────────
+const PASS_GUEST = "limonaia78120";
+const PASS_ADMIN = "Big38G0NH4WK3M+";
+
+function checkPassword() {
+  const input = document.getElementById('lockInput');
+  const error = document.getElementById('lockError');
+  const val = input.value;
+
+  if (val === PASS_ADMIN) {
+    sessionStorage.setItem('maylis_auth', 'admin');
+    unlockSite(true);
+  } else if (val === PASS_GUEST) {
+    sessionStorage.setItem('maylis_auth', 'guest');
+    unlockSite(false);
+  } else {
+    input.classList.add('error');
+    error.classList.add('visible');
+    input.value = '';
+    setTimeout(() => input.classList.remove('error'), 400);
+  }
+}
+
+function unlockSite(asAdmin) {
+  document.getElementById('passwordScreen').classList.add('hidden');
+  setTimeout(() => document.getElementById('passwordScreen').style.display = 'none', 500);
+  if (asAdmin) {
+    isAdmin = true;
+    document.body.classList.add('admin-mode');
+    document.getElementById('adminToggle').style.display = 'inline-block';
+    document.getElementById('adminToggle').textContent = '✦ Terminer';
+    document.getElementById('addYearSection').style.display = 'block';
+  } else {
+    document.getElementById('adminToggle').style.display = 'none';
+  }
+  renderDailyPhoto();
+  showPopup();
+}
+
+// Restaurer la session
+const savedAuth = sessionStorage.getItem('maylis_auth');
+if (savedAuth === 'admin') {
+  document.getElementById('passwordScreen').style.display = 'none';
+  isAdmin = true;
+  document.body.classList.add('admin-mode');
+  document.getElementById('adminToggle').style.display = 'inline-block';
+  document.getElementById('adminToggle').textContent = '✦ Terminer';
+  renderDailyPhoto();
+} else if (savedAuth === 'guest') {
+  document.getElementById('passwordScreen').style.display = 'none';
+  document.getElementById('adminToggle').style.display = 'none';
+  renderDailyPhoto();
+}
+
+// ─── LOGOUT ──────────────────────────────────────────────────────
+function logout() {
+  sessionStorage.clear();
+  location.reload();
+}
+
+// ─── ADMIN ──────────────────────────────────────────────────────
+let isAdmin = false;
+
+function toggleAdmin() {
+  isAdmin = !isAdmin;
+  document.body.classList.toggle('admin-mode', isAdmin);
+  document.getElementById('adminToggle').textContent = isAdmin ? '✦ Terminer' : '✦ Gérer';
+  document.getElementById('addYearSection').style.display = isAdmin ? 'block' : 'none';
+}
+
+// ─── UPLOAD ─────────────────────────────────────────────────────
+async function fillPlaceholder(year, idx, input) {
+  const file = input.files[0];
+  if (!file) return;
+  const exifDate = file.type.startsWith('image') ? await readExifDate(file) : null;
+
+  try {
+    const result = await uploadMediaToCloudinary(file);
+    const src = result.secure_url;
+    albumData[year].medias[idx] = {
+      src,
+      type: file.type.startsWith('video') ? 'video' : 'image',
+      caption: '',
+      date: year,
+      exifDate: exifDate ? exifDate.toISOString() : null,
+      publicId: result.public_id,
+    };
+    await saveData();
+    render();
+    renderDailyPhoto();
+  } catch(e) {
+    alert('Erreur upload : ' + e.message);
+  }
+}
+
+async function addMediaToYear(year, input) {
+  const files = Array.from(input.files);
+  if (!files.length) return;
+  for (const file of files) {
+    const exifDate = file.type.startsWith('image') ? await readExifDate(file) : null;
+    try {
+      const result = await uploadMediaToCloudinary(file);
+      albumData[year].medias.push({
+        src: result.secure_url,
+        type: file.type.startsWith('video') ? 'video' : 'image',
+        caption: '',
+        date: year,
+        exifDate: exifDate ? exifDate.toISOString() : null,
+        publicId: result.public_id,
+      });
+    } catch(e) { console.error('Upload error', file.name, e); }
+  }
+  await saveData();
+  render();
+  renderDailyPhoto();
+}
+
+function addYear() {
+  const val = document.getElementById('newYearInput').value.trim();
+  if (!val || albumData[val]) return;
+  albumData[val] = { medias: [null, null, null, null] };
+  saveData();
+  document.getElementById('addYearForm').classList.remove('visible');
+  render();
+  setTimeout(() => document.getElementById('year-' + val)?.scrollIntoView({ behavior: 'smooth' }), 100);
+}
+
+// ─── LIGHTBOX ───────────────────────────────────────────────────
+let lbCurrent = 0;
+
+function openLightbox(year, idx) {
+  const flatIdx = allMediaItems.findIndex(m => m.year === year && m.idx === idx);
+  if (flatIdx === -1) return;
+  lbCurrent = flatIdx;
+  showLightboxItem();
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function showLightboxItem() {
+  const item = allMediaItems[lbCurrent];
+  if (!item) return;
+  const img = document.getElementById('lightboxImg');
+  const vid = document.getElementById('lightboxVideo');
+  const cap = document.getElementById('lightboxCaption');
+
+  if (item.type === 'video') {
+    img.style.display = 'none';
+    vid.style.display = 'block';
+    vid.src = item.src;
+  } else {
+    vid.style.display = 'none';
+    vid.src = '';
+    img.style.display = 'block';
+    img.src = item.src;
+  }
+  cap.textContent = item.caption || '';
+}
+
+function closeLightbox(e) {
+  if (e && e.target !== document.getElementById('lightbox') && !e.target.classList.contains('lightbox-close')) return;
+  document.getElementById('lightbox').classList.remove('open');
+  document.getElementById('lightboxVideo').src = '';
+  document.body.style.overflow = '';
+}
+
+function navigateLightbox(dir) {
+  lbCurrent = (lbCurrent + dir + allMediaItems.length) % allMediaItems.length;
+  showLightboxItem();
+}
+
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key === 'ArrowLeft') navigateLightbox(-1);
+  if (e.key === 'ArrowRight') navigateLightbox(1);
+  if (e.key === 'Escape') { document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow = ''; }
+});
+
+// ─── NAV ACTIVE ON SCROLL ───────────────────────────────────────
+function updateNavActive() {
+  const sections = document.querySelectorAll('.year-section');
+  const links = document.querySelectorAll('.year-nav a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const yr = entry.target.id.replace('year-', '');
+        const link = document.querySelector(`.year-nav a[data-year="${yr}"]`);
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-40% 0px -50% 0px' });
+  sections.forEach(s => observer.observe(s));
+}
+
+
+// ─── WELCOME POPUP ───────────────────────────────────────────────
+function showPopup() {
+  // Ne montrer qu'une fois par session
+  if (sessionStorage.getItem('maylis_welcomed')) return;
+  setTimeout(() => {
+    document.getElementById('welcomePopup').classList.add('visible');
+  }, 800);
+}
+
+function closePopup() {
+  document.getElementById('welcomePopup').classList.remove('visible');
+  sessionStorage.setItem('maylis_welcomed', '1');
+}
+
+// Fermer en cliquant hors de la card
+document.getElementById('welcomePopup').addEventListener('click', e => {
+  if (e.target === document.getElementById('welcomePopup')) closePopup();
+});
+
+// ─── PHOTO DU JOUR ───────────────────────────────────────────────
+function getDailyPhoto() {
+  // Collecter toutes les photos (pas vidéos, pas placeholders)
+  const allPhotos = [];
+  Object.keys(albumData).sort().forEach(year => {
+    (albumData[year].medias || []).forEach(m => {
+      if (m && m.type === 'image') allPhotos.push(m);
+    });
+  });
+  if (!allPhotos.length) return null;
+
+  // Sélection déterministe basée sur le jour (change toutes les 24h)
+  const today = new Date();
+  const dayIndex = Math.floor(today.getTime() / (1000 * 60 * 60 * 24));
+  return allPhotos[dayIndex % allPhotos.length];
+}
+
+function renderDailyPhoto() {
+  const photo = getDailyPhoto();
+  const section = document.getElementById('dailyPhotoSection');
+  const frame = document.getElementById('dailyFrame');
+  if (!photo) {
+    section.style.display = 'none';
+    return;
+  }
+  section.style.display = 'block';
+
+  // Formater la date
+  let dateStr = '';
+  if (photo.exifDate) {
+    const d = new Date(photo.exifDate);
+    dateStr = d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+  } else if (photo.date) {
+    dateStr = photo.date;
+  }
+
+  frame.innerHTML = `
+    <img src="${photo.src}" alt="${photo.caption || ''}">
+    <div class="daily-overlay">
+      <span class="daily-caption-text">${photo.caption || ''}</span>
+      ${dateStr ? `<span class="daily-date">${dateStr}</span>` : ''}
+    </div>
+  `;
+}
+
+// ─── EXIF À L'UPLOAD ─────────────────────────────────────────────
+async function readExifDate(file) {
+  try {
+    if (typeof exifr === 'undefined') return null;
+    const data = await exifr.parse(file, ['DateTimeOriginal', 'DateTime']);
+    return data?.DateTimeOriginal || data?.DateTime || null;
+  } catch(e) { return null; }
+}
+
+
+// ─── IMPORT GLOBAL ───────────────────────────────────────────────
+let importQueue = [];      // fichiers sans EXIF à traiter manuellement
+let importQueueCallback = null;
+
+async function importAllFiles(input) {
+  const files = Array.from(input.files);
+  if (!files.length) return;
+
+  const progress = document.getElementById('importProgress');
+  const fill = document.getElementById('progressFill');
+  const text = document.getElementById('progressText');
+  progress.classList.add('visible');
+
+  let done = 0;
+  const withExif = [];
+  const withoutExif = [];
+
+  // Upload + EXIF en parallèle par batch de 3
+  const batchSize = 3;
+  for (let i = 0; i < files.length; i += batchSize) {
+    const batch = files.slice(i, i + batchSize);
+    await Promise.all(batch.map(async file => {
+      const exifDate = file.type.startsWith('image') ? await readExifDate(file) : null;
+      try {
+        const result = await uploadMediaToCloudinary(file, prog => {
+          // progress par fichier
+        });
+        const item = {
+          src: result.secure_url,
+          publicId: result.public_id,
+          exifDate,
+          type: file.type.startsWith('video') ? 'video' : 'image',
+          file,
+        };
+        if (exifDate) withExif.push(item);
+        else withoutExif.push({ ...item, src: result.secure_url });
+      } catch(e) { console.error('Upload error', file.name, e); }
+      done++;
+      const pct = Math.round((done / files.length) * 100);
+      fill.style.width = pct + '%';
+      text.textContent = `${done} / ${files.length} uploadés…`;
+    }));
+  }
+
+  // Placer ceux avec EXIF dans la bonne année
+  for (const r of withExif) {
+    const year = String(r.exifDate.getFullYear());
+    if (!albumData[year]) albumData[year] = { medias: [] };
+    albumData[year].medias.push({
+      src: r.src,
+      publicId: r.publicId,
+      type: r.type,
+      caption: '',
+      date: year,
+      exifDate: r.exifDate.toISOString(),
+    });
+  }
+
+  sortAllSections();
+  await saveData();
+  render();
+  renderDailyPhoto();
+
+  text.textContent = `✓ ${withExif.length} placée${withExif.length > 1 ? 's' : ''} automatiquement.${withoutExif.length ? ` ${withoutExif.length} sans date à classer.` : ''}`;
+
+  if (withoutExif.length) {
+    importQueue = withoutExif;
+    processImportQueue();
+  } else {
+    setTimeout(() => progress.classList.remove('visible'), 3000);
+  }
+
+  input.value = '';
+}
+
+function readFileAsDataURL(file) {
+  return new Promise(res => {
+    const r = new FileReader();
+    r.onload = e => res(e.target.result);
+    r.readAsDataURL(file);
+  });
+}
+
+// ─── TRI CHRONOLOGIQUE ───────────────────────────────────────────
+function sortAllSections() {
+  Object.keys(albumData).forEach(year => {
+    const medias = albumData[year].medias.filter(m => m !== null);
+    medias.sort((a, b) => {
+      if (a.exifDate && b.exifDate) return new Date(a.exifDate) - new Date(b.exifDate);
+      if (a.exifDate) return -1;
+      if (b.exifDate) return 1;
+      return 0;
+    });
+    albumData[year].medias = medias;
+  });
+}
+
+// ─── YEAR PICKER (photos sans EXIF) ──────────────────────────────
+let currentPickerItem = null;
+
+function processImportQueue() {
+  if (!importQueue.length) {
+    document.getElementById('yearPickerPopup').classList.remove('visible');
+    saveData(); render(); renderDailyPhoto();
+    setTimeout(() => document.getElementById('importProgress').classList.remove('visible'), 2000);
+    return;
+  }
+  currentPickerItem = importQueue.shift();
+
+  // Mettre à jour le select avec les années existantes
+  const sel = document.getElementById('yearPickerSelect');
+  const years = Object.keys(albumData).sort();
+  sel.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
+
+  document.getElementById('yearPickerFilename').textContent = currentPickerItem.file.name;
+  document.getElementById('yearPickerPopup').classList.add('visible');
+}
+
+async function confirmYearPicker() {
+  if (!currentPickerItem) return;
+  const year = document.getElementById('yearPickerSelect').value;
+  if (!albumData[year]) albumData[year] = { medias: [] };
+  albumData[year].medias.push({
+    src: currentPickerItem.src,
+    publicId: currentPickerItem.publicId,
+    type: currentPickerItem.type,
+    caption: '',
+    date: year,
+    exifDate: null,
+  });
+  sortAllSections();
+  await saveData();
+  render();
+  renderDailyPhoto();
+  document.getElementById('yearPickerPopup').classList.remove('visible');
+  setTimeout(processImportQueue, 300);
+}
+
+function skipYearPicker() {
+  document.getElementById('yearPickerPopup').classList.remove('visible');
+  setTimeout(processImportQueue, 300);
+}
+
+// ─── INIT ────────────────────────────────────────────────────────
+// loadData est async et appellera render() lui-même
+loadData();
+</script>
+</body>
+</html>
