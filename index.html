@@ -984,42 +984,42 @@
 </style>
 
 <script>
-// ─── CLOUDINARY CONFIG ───────────────────────────────────────────
+// ─── CONFIG ──────────────────────────────────────────────────────
 const CLD_CLOUD = "dayi1mq7p";
 const CLD_PRESET = "mc-archive";
-const CLD_API_KEY = "559222631481197";
 const CLD_BASE_URL = `https://api.cloudinary.com/v1_1/${CLD_CLOUD}`;
 
-// Structure album stockée sur Cloudinary comme JSON
-const MANIFEST_PUBLIC_ID = "mc_archive_manifest";
+const JSONBIN_ID = "6a013aaec0954111d805bf21";
+const JSONBIN_KEY = "$2a$10$4Hz/UUK6RZsvPvHvLOfre..2w/um9CLvVlTxkD/DMATQltcgbIq1y";
+const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
 
+// ─── MANIFEST (JSONBin) ───────────────────────────────────────────
 async function loadManifest() {
   try {
-    const url = `https://res.cloudinary.com/${CLD_CLOUD}/raw/upload/${MANIFEST_PUBLIC_ID}.json?t=${Date.now()}`;
-    const res = await fetch(url);
+    const res = await fetch(`${JSONBIN_URL}/latest`, {
+      headers: { 'X-Master-Key': JSONBIN_KEY }
+    });
     if (!res.ok) return {};
-    return await res.json();
+    const data = await res.json();
+    return data.record || {};
   } catch(e) { return {}; }
 }
 
 async function saveManifest(data) {
-  // Sauvegarder aussi en localStorage comme cache
   try { localStorage.setItem('mc_manifest_cache', JSON.stringify(data)); } catch(e) {}
-
-  const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-  const fd = new FormData();
-  fd.append('file', blob, 'manifest.json');
-  fd.append('upload_preset', CLD_PRESET);
-  fd.append('public_id', MANIFEST_PUBLIC_ID);
-  fd.append('resource_type', 'raw');
-  fd.append('overwrite', 'true');
-
   try {
-    const res = await fetch(`${CLD_BASE_URL}/raw/upload`, { method: 'POST', body: fd });
-    return await res.json();
+    await fetch(JSONBIN_URL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': JSONBIN_KEY
+      },
+      body: JSON.stringify(data)
+    });
   } catch(e) { console.error('Manifest save error', e); }
 }
 
+// ─── UPLOAD MEDIA (Cloudinary) ────────────────────────────────────
 async function uploadMediaToCloudinary(file, onProgress) {
   const isVideo = file.type.startsWith('video');
   const resourceType = isVideo ? 'video' : 'image';
