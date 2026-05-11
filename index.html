@@ -982,6 +982,67 @@
   }
 
 </style>
+
+<script>
+// ─── CLOUDINARY CONFIG ───────────────────────────────────────────
+const CLD_CLOUD = "dayi1mq7p";
+const CLD_PRESET = "mc-archive";
+const CLD_API_KEY = "559222631481197";
+const CLD_BASE_URL = `https://api.cloudinary.com/v1_1/${CLD_CLOUD}`;
+
+// Structure album stockée sur Cloudinary comme JSON
+const MANIFEST_PUBLIC_ID = "mc_archive_manifest";
+
+async function loadManifest() {
+  try {
+    const url = `https://res.cloudinary.com/${CLD_CLOUD}/raw/upload/${MANIFEST_PUBLIC_ID}.json?t=${Date.now()}`;
+    const res = await fetch(url);
+    if (!res.ok) return {};
+    return await res.json();
+  } catch(e) { return {}; }
+}
+
+async function saveManifest(data) {
+  // Sauvegarder aussi en localStorage comme cache
+  try { localStorage.setItem('mc_manifest_cache', JSON.stringify(data)); } catch(e) {}
+
+  const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+  const fd = new FormData();
+  fd.append('file', blob, 'manifest.json');
+  fd.append('upload_preset', CLD_PRESET);
+  fd.append('public_id', MANIFEST_PUBLIC_ID);
+  fd.append('resource_type', 'raw');
+  fd.append('overwrite', 'true');
+
+  try {
+    const res = await fetch(`${CLD_BASE_URL}/raw/upload`, { method: 'POST', body: fd });
+    return await res.json();
+  } catch(e) { console.error('Manifest save error', e); }
+}
+
+async function uploadMediaToCloudinary(file, onProgress) {
+  const isVideo = file.type.startsWith('video');
+  const resourceType = isVideo ? 'video' : 'image';
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('upload_preset', CLD_PRESET);
+
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `${CLD_BASE_URL}/${resourceType}/upload`);
+    xhr.upload.onprogress = e => {
+      if (e.lengthComputable && onProgress) onProgress(e.loaded / e.total);
+    };
+    xhr.onload = () => {
+      try { resolve(JSON.parse(xhr.responseText)); }
+      catch(e) { reject(e); }
+    };
+    xhr.onerror = reject;
+    xhr.send(fd);
+  });
+}
+</script>
+
 </head>
 <body>
 
@@ -1102,29 +1163,39 @@
 
 <script>
 // ─── DATA ───────────────────────────────────────────────────────
-// Structure initiale — les médias sont stockés en mémoire (base64)
-// Pour un vrai déploiement, connecter à un backend ou utiliser IndexedDB
 let albumData = {};
 
-// Charge depuis localStorage si dispo
-function loadData() {
+async function loadData() {
+  // Charger depuis le cache localStorage d'abord (affichage immédiat)
   try {
-    const saved = localStorage.getItem('maylis_album');
-    if (saved) albumData = JSON.parse(saved);
-    else {
-      // Années de démonstration avec placeholders
-      albumData = {
-        "2023": { medias: [null, null, null, null, null, null] },
-        "2024": { medias: [null, null, null, null, null, null] },
-        "2025": { medias: [null, null, null, null, null, null] },
-        "2026": { medias: [null, null, null, null] },
-      };
+    const cache = localStorage.getItem('mc_manifest_cache');
+    if (cache) {
+      albumData = JSON.parse(cache);
+      render();
+      renderDailyPhoto();
     }
-  } catch(e) { albumData = {}; }
+  } catch(e) {}
+
+  // Puis charger depuis Cloudinary (source de vérité)
+  const manifest = await loadManifest();
+  if (manifest && Object.keys(manifest).length) {
+    albumData = manifest;
+  } else if (!Object.keys(albumData).length) {
+    // Première fois — structure initiale
+    albumData = {
+      "2023": { medias: [] },
+      "2024": { medias: [] },
+      "2025": { medias: [] },
+      "2026": { medias: [] },
+    };
+  }
+  render();
+  renderDailyPhoto();
 }
 
-function saveData() {
-  try { localStorage.setItem('maylis_album', JSON.stringify(albumData)); } catch(e) {}
+async function saveData() {
+  try { localStorage.setItem('mc_manifest_cache', JSON.stringify(albumData)); } catch(e) {}
+  await saveManifest(albumData);
 }
 
 // ─── RENDER ─────────────────────────────────────────────────────
@@ -1308,42 +1379,46 @@ async function fillPlaceholder(year, idx, input) {
   const file = input.files[0];
   if (!file) return;
   const exifDate = file.type.startsWith('image') ? await readExifDate(file) : null;
-  const reader = new FileReader();
-  reader.onload = e => {
+
+  try {
+    const result = await uploadMediaToCloudinary(file);
+    const src = result.secure_url;
     albumData[year].medias[idx] = {
-      src: e.target.result,
+      src,
       type: file.type.startsWith('video') ? 'video' : 'image',
       caption: '',
       date: year,
       exifDate: exifDate ? exifDate.toISOString() : null,
+      publicId: result.public_id,
     };
-    saveData();
+    await saveData();
     render();
     renderDailyPhoto();
-  };
-  reader.readAsDataURL(file);
+  } catch(e) {
+    alert('Erreur upload : ' + e.message);
+  }
 }
 
 async function addMediaToYear(year, input) {
   const files = Array.from(input.files);
   if (!files.length) return;
-  let loaded = 0;
   for (const file of files) {
     const exifDate = file.type.startsWith('image') ? await readExifDate(file) : null;
-    const reader = new FileReader();
-    reader.onload = e => {
+    try {
+      const result = await uploadMediaToCloudinary(file);
       albumData[year].medias.push({
-        src: e.target.result,
+        src: result.secure_url,
         type: file.type.startsWith('video') ? 'video' : 'image',
         caption: '',
         date: year,
         exifDate: exifDate ? exifDate.toISOString() : null,
+        publicId: result.public_id,
       });
-      loaded++;
-      if (loaded === files.length) { saveData(); render(); renderDailyPhoto(); }
-    };
-    reader.readAsDataURL(file);
+    } catch(e) { console.error('Upload error', file.name, e); }
   }
+  await saveData();
+  render();
+  renderDailyPhoto();
 }
 
 function addYear() {
@@ -1513,30 +1588,43 @@ async function importAllFiles(input) {
   progress.classList.add('visible');
 
   let done = 0;
-  const noExif = []; // { file, src, type }
+  const withExif = [];
+  const withoutExif = [];
 
-  // Lire tous les fichiers + EXIF
-  const results = [];
-  for (const file of files) {
-    const exifDate = file.type.startsWith('image') ? await readExifDate(file) : null;
-    const src = await readFileAsDataURL(file);
-    results.push({ file, src, exifDate, type: file.type.startsWith('video') ? 'video' : 'image' });
-    done++;
-    const pct = Math.round((done / files.length) * 100);
-    fill.style.width = pct + '%';
-    text.textContent = `${done} / ${files.length} traités…`;
+  // Upload + EXIF en parallèle par batch de 3
+  const batchSize = 3;
+  for (let i = 0; i < files.length; i += batchSize) {
+    const batch = files.slice(i, i + batchSize);
+    await Promise.all(batch.map(async file => {
+      const exifDate = file.type.startsWith('image') ? await readExifDate(file) : null;
+      try {
+        const result = await uploadMediaToCloudinary(file, prog => {
+          // progress par fichier
+        });
+        const item = {
+          src: result.secure_url,
+          publicId: result.public_id,
+          exifDate,
+          type: file.type.startsWith('video') ? 'video' : 'image',
+          file,
+        };
+        if (exifDate) withExif.push(item);
+        else withoutExif.push({ ...item, src: result.secure_url });
+      } catch(e) { console.error('Upload error', file.name, e); }
+      done++;
+      const pct = Math.round((done / files.length) * 100);
+      fill.style.width = pct + '%';
+      text.textContent = `${done} / ${files.length} uploadés…`;
+    }));
   }
 
-  // Trier : ceux avec EXIF → section automatique
-  const withExif = results.filter(r => r.exifDate);
-  const withoutExif = results.filter(r => !r.exifDate);
-
-  // Placer ceux avec EXIF
+  // Placer ceux avec EXIF dans la bonne année
   for (const r of withExif) {
     const year = String(r.exifDate.getFullYear());
     if (!albumData[year]) albumData[year] = { medias: [] };
     albumData[year].medias.push({
       src: r.src,
+      publicId: r.publicId,
       type: r.type,
       caption: '',
       date: year,
@@ -1544,15 +1632,13 @@ async function importAllFiles(input) {
     });
   }
 
-  // Trier chaque section par date EXIF
   sortAllSections();
-  saveData();
+  await saveData();
   render();
   renderDailyPhoto();
 
-  text.textContent = `✓ ${withExif.length} photo${withExif.length > 1 ? 's' : ''} placée${withExif.length > 1 ? 's' : ''} automatiquement.${withoutExif.length ? ` ${withoutExif.length} sans date à traiter.` : ''}`;
+  text.textContent = `✓ ${withExif.length} placée${withExif.length > 1 ? 's' : ''} automatiquement.${withoutExif.length ? ` ${withoutExif.length} sans date à classer.` : ''}`;
 
-  // Ceux sans EXIF → file d'attente manuelle
   if (withoutExif.length) {
     importQueue = withoutExif;
     processImportQueue();
@@ -1606,18 +1692,22 @@ function processImportQueue() {
   document.getElementById('yearPickerPopup').classList.add('visible');
 }
 
-function confirmYearPicker() {
+async function confirmYearPicker() {
   if (!currentPickerItem) return;
   const year = document.getElementById('yearPickerSelect').value;
   if (!albumData[year]) albumData[year] = { medias: [] };
   albumData[year].medias.push({
     src: currentPickerItem.src,
+    publicId: currentPickerItem.publicId,
     type: currentPickerItem.type,
     caption: '',
     date: year,
     exifDate: null,
   });
   sortAllSections();
+  await saveData();
+  render();
+  renderDailyPhoto();
   document.getElementById('yearPickerPopup').classList.remove('visible');
   setTimeout(processImportQueue, 300);
 }
@@ -1628,8 +1718,8 @@ function skipYearPicker() {
 }
 
 // ─── INIT ────────────────────────────────────────────────────────
+// loadData est async et appellera render() lui-même
 loadData();
-render();
 </script>
 </body>
 </html>
