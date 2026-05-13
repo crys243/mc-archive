@@ -652,11 +652,21 @@ function checkLetterCode() {
     document.querySelector('.letter-code-btn').style.display = 'none';
     // Après 3 secondes, ouvrir l'album
     setTimeout(() => {
+      // Couper la musique
+      const audio = document.getElementById('letterAudio');
+      audio.pause();
+      audio.currentTime = 0;
+      // Cacher la page lettre
       document.getElementById('page-letter').style.display = 'none';
       document.getElementById('page-letter').classList.remove('active');
+      // Afficher le header
       document.getElementById('siteHeader').style.display = 'flex';
+      // Remettre toutes les pages en display none sauf home
+      document.querySelectorAll('.page').forEach(p => { p.style.display = 'none'; p.classList.remove('active'); });
+      document.getElementById('page-home').style.display = 'block';
+      document.getElementById('page-home').classList.add('active');
+      // Charger les données
       loadData();
-      showPage('page-home');
     }, 3000);
   } else {
     input.classList.add('error');
