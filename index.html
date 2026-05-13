@@ -220,6 +220,224 @@ body.admin-mode .add-media-btn { display: inline-flex; }
   .media-item.dragging { opacity: 0.4; border: 2px dashed var(--green); }
   .media-item.drag-over { border: 2px solid var(--green); transform: scale(1.03); }
 
+  
+  /* ── LETTER PAGE ── */
+  #page-letter {
+    min-height: 100vh;
+    background: var(--cream);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 4rem 2rem 4rem;
+  }
+
+  .letter-wrap {
+    max-width: 560px;
+    width: 100%;
+  }
+
+  .letter-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .letter-mc {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--green);
+    letter-spacing: 0.02em;
+  }
+
+  .letter-divider {
+    width: 40px;
+    height: 1px;
+    background: var(--sand);
+    margin: 1rem auto;
+  }
+
+  .letter-body {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--text);
+    line-height: 1.9;
+    margin-bottom: 2.5rem;
+  }
+
+  .letter-body p {
+    margin-bottom: 1.2rem;
+  }
+
+  .letter-body .salutation {
+    color: var(--dark);
+    font-size: 1.15rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .letter-body .signature {
+    margin-top: 2rem;
+    color: var(--dark);
+    font-size: 1.1rem;
+  }
+
+  .letter-body .riddle {
+    color: var(--green-light);
+    font-size: 1.05rem;
+    border-left: 2px solid var(--green);
+    padding-left: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  /* Audio player */
+  .letter-audio {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+    padding: 1rem 1.2rem;
+    background: var(--warm);
+    border-radius: 3px;
+    border: 1px solid var(--sand);
+  }
+
+  .audio-play-btn {
+    background: var(--green);
+    border: none;
+    color: var(--cream);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+  .audio-play-btn:hover { background: var(--green-light); }
+
+  .audio-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .audio-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--dark);
+  }
+
+  .audio-artist {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .audio-progress {
+    flex: 1;
+    height: 2px;
+    background: var(--sand);
+    border-radius: 1px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .audio-progress-fill {
+    height: 100%;
+    background: var(--green);
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+
+  /* Code input dans la lettre */
+  .letter-code-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--sand);
+    text-align: center;
+  }
+
+  .letter-code-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  .letter-code-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .letter-code-input {
+    width: 100%;
+    max-width: 260px;
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.3em;
+    border: none;
+    border-bottom: 1px solid var(--sand);
+    background: none;
+    color: var(--dark);
+    padding: 0.4rem 0;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .letter-code-input:focus { border-color: var(--green); }
+  .letter-code-input.error { border-color: #c0392b; animation: shake 0.35s ease; }
+
+  .letter-code-btn {
+    background: var(--green);
+    color: var(--cream);
+    border: none;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.65rem 2rem;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .letter-code-btn:hover { background: var(--green-light); }
+
+  .letter-code-error {
+    font-size: 0.75rem;
+    color: #c0392b;
+    opacity: 0;
+    transition: opacity 0.2s;
+    min-height: 1rem;
+  }
+  .letter-code-error.visible { opacity: 1; }
+
+  .letter-success {
+    display: none;
+    background: var(--warm);
+    border: 1px solid var(--green);
+    border-radius: 3px;
+    padding: 1.2rem 1.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--green-light);
+    line-height: 1.6;
+    text-align: center;
+    margin-top: 1rem;
+  }
+  .letter-success.visible { display: block; }
+
   footer { text-align: center; padding: 3rem 2rem; border-top: 1px solid var(--warm); font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.9rem; color: var(--sand); }
 
 @media (max-width: 600px) {
@@ -351,7 +569,126 @@ body.admin-mode .add-media-btn { display: inline-flex; }
   </label>
 </div>
 
+
+<!-- PAGE LETTRE -->
+<div id="page-letter" class="page" style="display:none;">
+  <div class="letter-wrap">
+
+    <div class="letter-header">
+      <div class="letter-mc">M&C</div>
+      <div class="letter-divider"></div>
+    </div>
+
+    <!-- Audio -->
+    <div class="letter-audio">
+      <button class="audio-play-btn" id="audioPlayBtn" onclick="toggleAudio()">▶</button>
+
+      <div class="audio-progress" id="audioProgress" onclick="seekAudio(event)">
+        <div class="audio-progress-fill" id="audioFill"></div>
+      </div>
+    </div>
+    <audio id="letterAudio" src="https://res.cloudinary.com/dayi1mq7p/video/upload/v1778674351/MC_Archive_xp1jm5.m4a" loop preload="auto"></audio>
+
+    <!-- Corps de la lettre -->
+    <div class="letter-body">
+      <p class="salutation">Chère Maÿlis,</p>
+      <p>Premièrement je tiens à te féliciter, car si tu lis ce message, c'est que tu as réussi à en déchiffrer le code. Je savais que tu y arriverais&nbsp;!</p>
+      <p>Tu sais, on a vécu beaucoup de choses ensemble. On a connu énormément de hauts et de bas, parfois des moments très compliqués, et je sais que ça n'a pas toujours été facile, ni pour toi, ni pour moi.</p>
+      <p>Mais malgré tout ça, ce qu'on a vécu était réel. Quasiment 3 ans de notre vie, ça ne s'efface pas comme si ça n'avait jamais existé. Même si on s'est disputés, même si certaines choses ont été dites ou faites, je ne voulais pas que notre histoire se perde complètement.</p>
+      <p>Quand tu m'as dit que tu avais supprimé nos photos, ça m'a marqué. Alors j'ai voulu créer un endroit où tous ces souvenirs existent encore pour que tu puisses toujours y avoir accès si un jour tu en ressens l'envie.</p>
+      <p>J'aimerais surtout que tu te rappelles des bonnes choses. Des moments sincères, des fous rires, des voyages, des habitudes qu'on avait, de tout ce qu'on a construit ensemble.</p>
+      <p>Et je veux aussi que tu saches que j'essaie réellement de changer certaines choses chez moi. Pas seulement pour toi, mais aussi pour moi-même. Je sais que tu peux douter que j'en sois capable, et honnêtement je comprends pourquoi. Mais malgré ça, j'essaie.</p>
+      <p>Peu importe ce qu'il arrive ensuite entre nous, notre histoire a existé, et elle comptera toujours pour moi.</p>
+      <p>Et maintenant… il te reste encore un dernier mystère à résoudre.</p>
+      <p>Trouve le deuxième code, et tu pourras accéder à toutes les photos.</p>
+      <p>Comme ça, même si elles ne sont plus dans ton téléphone, notre histoire, elle, ne sera jamais vraiment perdue.</p>
+      <p class="riddle">Alors, tu te souviens de l'endroit où on était pour notre première année et du code postal&nbsp;?</p>
+      <p class="signature">Crys</p>
+    </div>
+
+    <!-- Input code -->
+    <div class="letter-code-section">
+      <p class="letter-code-label">Entre le code pour accéder à l'album…</p>
+      <div class="letter-code-form">
+        <input class="letter-code-input" id="letterCodeInput" type="password" placeholder="••••••" maxlength="30" onkeydown="if(event.key==='Enter') checkLetterCode()">
+        <div class="letter-code-error" id="letterCodeError">Code incorrect. Réessaie.</div>
+        <button class="letter-code-btn" onclick="checkLetterCode()">Accéder</button>
+      </div>
+      <div class="letter-success" id="letterSuccess">
+        ✓ Tu y es&nbsp;! La prochaine fois, tu peux entrer directement ce code sur la page d'accueil — plus besoin de passer par la lettre.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
 <script>
+
+// ─── LETTRE ──────────────────────────────────────────────────────
+function showLetter() {
+  document.getElementById('passwordScreen').classList.add('hidden');
+  setTimeout(() => document.getElementById('passwordScreen').style.display='none', 500);
+  document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.display='none'; });
+  const lp = document.getElementById('page-letter');
+  lp.style.display = 'flex';
+  lp.classList.add('active');
+  window.scrollTo(0,0);
+  // Lancer la musique automatiquement
+  setTimeout(() => {
+    const audio = document.getElementById('letterAudio');
+    const btn = document.getElementById('audioPlayBtn');
+    audio.play().then(() => { btn.textContent = '❚❚'; }).catch(() => {});
+  }, 600);
+}
+
+function checkLetterCode() {
+  const input = document.getElementById('letterCodeInput');
+  const val = input.value;
+  if (val === PASS_GUEST) {
+    sessionStorage.setItem('mc_auth', 'guest');
+    document.getElementById('letterSuccess').classList.add('visible');
+    document.getElementById('letterCodeInput').style.display = 'none';
+    document.querySelector('.letter-code-btn').style.display = 'none';
+    // Après 3 secondes, ouvrir l'album
+    setTimeout(() => {
+      document.getElementById('page-letter').style.display = 'none';
+      document.getElementById('page-letter').classList.remove('active');
+      document.getElementById('siteHeader').style.display = 'flex';
+      loadData();
+      showPage('page-home');
+    }, 3000);
+  } else {
+    input.classList.add('error');
+    document.getElementById('letterCodeError').classList.add('visible');
+    input.value = '';
+    setTimeout(() => input.classList.remove('error'), 400);
+  }
+}
+
+// ─── AUDIO ───────────────────────────────────────────────────────
+function toggleAudio() {
+  const audio = document.getElementById('letterAudio');
+  const btn = document.getElementById('audioPlayBtn');
+  if (audio.paused) { audio.play(); btn.textContent = '❚❚'; }
+  else { audio.pause(); btn.textContent = '▶'; }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const audio = document.getElementById('letterAudio');
+  const fill = document.getElementById('audioFill');
+  audio.addEventListener('timeupdate', () => {
+    if (audio.duration) fill.style.width = (audio.currentTime / audio.duration * 100) + '%';
+  });
+});
+
+function seekAudio(e) {
+  const audio = document.getElementById('letterAudio');
+  const bar = document.getElementById('audioProgress');
+  const pct = e.offsetX / bar.offsetWidth;
+  audio.currentTime = pct * audio.duration;
+}
+
 // ─── CONFIG ──────────────────────────────────────────────────────
 const CLD_CLOUD = "dayi1mq7p";
 const CLD_PRESET = "mc-archive";
@@ -571,11 +908,14 @@ document.addEventListener('keydown', e => {
 const PASS_GUEST = "limonaia78120";
 const PASS_ADMIN = "Big38G0NH4WK3M+";
 
+const PASS_LETTER = "elephantvert";
+
 function checkPassword() {
   const input = document.getElementById('lockInput');
   const val = input.value;
   if (val===PASS_ADMIN) { sessionStorage.setItem('mc_auth','admin'); unlockSite(true); }
   else if (val===PASS_GUEST) { sessionStorage.setItem('mc_auth','guest'); unlockSite(false); }
+  else if (val===PASS_LETTER) { sessionStorage.setItem('mc_auth','letter'); showLetter(); }
   else {
     input.classList.add('error');
     document.getElementById('lockError').classList.add('visible');
@@ -596,7 +936,10 @@ function unlockSite(asAdmin) {
 }
 
 const sa = sessionStorage.getItem('mc_auth');
-if (sa==='admin') {
+if (sa==='letter') {
+  document.getElementById('passwordScreen').style.display='none';
+  showLetter();
+} else if (sa==='admin') {
   document.getElementById('passwordScreen').style.display='none';
   document.getElementById('siteHeader').style.display='flex';
   isAdmin=true; document.body.classList.add('admin-mode');
