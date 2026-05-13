@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
- 
+
 :root {
   --cream: #1a1f1a;
   --warm: #222922;
@@ -21,10 +21,10 @@
   --text: #c8d4c8;
   --muted: #6a876a;
 }
- 
+
 html { scroll-behavior: smooth; }
 body { background: var(--cream); color: var(--text); font-family: 'Jost', sans-serif; font-weight: 300; min-height: 100vh; }
- 
+
 /* ── PASSWORD ── */
 #passwordScreen {
   position: fixed; inset: 0; z-index: 999;
@@ -45,7 +45,7 @@ body { background: var(--cream); color: var(--text); font-family: 'Jost', sans-s
 .lock-btn:hover { background: var(--green-light); }
 .lock-error { font-size: 0.75rem; color: #c0392b; opacity: 0; transition: opacity 0.2s; min-height: 1rem; }
 .lock-error.visible { opacity: 1; }
- 
+
 /* ── HEADER ── */
 .site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: var(--cream); border-bottom: 1px solid var(--warm); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px; }
 .site-title { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 300; font-style: italic; color: var(--text); cursor: pointer; text-decoration: none; }
@@ -53,11 +53,11 @@ body { background: var(--cream); color: var(--text); font-family: 'Jost', sans-s
 .header-actions { display: flex; gap: 0.75rem; align-items: center; }
 .btn-header { background: none; border: 1px solid var(--sand); color: var(--muted); font-family: 'Jost', sans-serif; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.4rem 0.9rem; border-radius: 2px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
 .btn-header:hover { border-color: var(--green); color: var(--green); }
- 
+
 /* ── PAGES ── */
 .page { display: none; min-height: 100vh; }
 .page.active { display: block; }
- 
+
 /* ── HOME HERO ── */
 .hero { margin-top: 64px; padding: 5rem 2rem 3rem; text-align: center; background: linear-gradient(to bottom, var(--warm) 0%, var(--cream) 100%); position: relative; overflow: hidden; }
 .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 0%, rgba(122,171,122,0.08) 0%, transparent 70%); }
@@ -65,7 +65,7 @@ body { background: var(--cream); color: var(--text); font-family: 'Jost', sans-s
 .hero-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(3rem, 8vw, 6rem); font-weight: 300; line-height: 1; color: var(--dark); margin-bottom: 1rem; }
 .hero-title em { font-style: italic; color: var(--green); }
 .hero-sub { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.15rem; color: var(--muted); max-width: 400px; margin: 0 auto; line-height: 1.6; }
- 
+
 /* ── DAILY ── */
 .daily-section { max-width: 700px; margin: 2rem auto 3rem; padding: 0 2rem; }
 .daily-label { font-family: 'Jost', sans-serif; font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--green); margin-bottom: 1rem; text-align: center; }
@@ -75,7 +75,7 @@ body { background: var(--cream); color: var(--text); font-family: 'Jost', sans-s
 .daily-caption-text { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1rem; color: rgba(232,237,232,0.9); }
 .daily-date { font-family: 'Jost', sans-serif; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(232,237,232,0.6); white-space: nowrap; margin-left: 1rem; }
 .daily-empty { display: flex; align-items: center; justify-content: center; height: 200px; color: var(--muted); font-family: 'Cormorant Garamond', serif; font-style: italic; }
- 
+
 /* ── YEAR CARDS ── */
 .section-label { font-family: 'Jost', sans-serif; font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--green); margin-bottom: 1.5rem; text-align: center; }
 .year-cards { max-width: 900px; margin: 0 auto 4rem; padding: 0 2rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
@@ -85,7 +85,7 @@ body { background: var(--cream); color: var(--text); font-family: 'Jost', sans-s
 .year-card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,14,10,0.8) 0%, rgba(10,14,10,0.1) 60%); display: flex; flex-direction: column; justify-content: flex-end; padding: 1rem; }
 .year-card-label { font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; font-weight: 300; color: var(--dark); line-height: 1; }
 .year-card-count { font-family: 'Jost', sans-serif; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(232,237,232,0.6); margin-top: 0.2rem; }
- 
+
 /* ── YEAR PAGE ── */
 .year-page-top { margin-top: 64px; padding: 2.5rem 2rem 1.5rem; display: flex; align-items: baseline; gap: 1.5rem; border-bottom: 1px solid var(--warm); max-width: 1200px; margin-left: auto; margin-right: auto; margin-top: 64px; }
 .year-page-title { font-family: 'Cormorant Garamond', serif; font-size: 4rem; font-weight: 300; color: var(--green); line-height: 1; }
@@ -93,7 +93,7 @@ body { background: var(--cream); color: var(--text); font-family: 'Jost', sans-s
 .year-page-nav { display: flex; gap: 0.5rem; margin-left: auto; }
 .year-nav-btn { background: none; border: 1px solid var(--sand); color: var(--muted); font-family: 'Jost', sans-serif; font-size: 0.7rem; letter-spacing: 0.08em; padding: 0.3rem 0.7rem; border-radius: 2px; cursor: pointer; transition: all 0.2s; }
 .year-nav-btn:hover { border-color: var(--green); color: var(--green); }
- 
+
 /* ── IMPORT BAR ── */
 .import-bar { display: none; background: var(--warm); border-bottom: 1px solid var(--sand); padding: 1rem 2rem; text-align: center; position: sticky; top: 64px; z-index: 90; }
 body.admin-mode .import-bar { display: block; }
@@ -106,7 +106,7 @@ body.admin-mode .import-bar { display: block; }
 .progress-track { height: 2px; background: var(--sand); border-radius: 1px; overflow: hidden; }
 .progress-fill { height: 100%; background: var(--green); width: 0%; transition: width 0.2s; }
 .progress-text { font-family: 'Jost', sans-serif; font-size: 0.68rem; color: var(--muted); margin-top: 0.4rem; text-align: center; }
- 
+
 /* ── MEDIA GRID ── */
 .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.6rem; padding: 1.5rem 2rem; max-width: 1200px; margin: 0 auto; }
 .media-item { position: relative; background: var(--warm); border-radius: 3px; overflow: hidden; aspect-ratio: 4/3; cursor: pointer; transition: transform 0.25s, box-shadow 0.25s; }
@@ -118,17 +118,17 @@ body.admin-mode .import-bar { display: block; }
 .media-item:hover .caption { opacity: 1; }
 .caption-text { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.85rem; color: rgba(232,237,232,0.9); }
 .video-badge { position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(10,14,10,0.6); color: var(--dark); font-size: 0.7rem; padding: 0.25rem 0.5rem; border-radius: 2px; }
- 
+
 .add-media-btn { display: none; margin: 1rem 2rem; align-items: center; gap: 0.5rem; background: none; border: 1px solid var(--warm); color: var(--muted); font-family: 'Jost', sans-serif; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.5rem 1rem; border-radius: 2px; cursor: pointer; transition: all 0.2s; position: relative; }
 .add-media-btn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 .add-media-btn:hover { border-color: var(--green); color: var(--green); }
 body.admin-mode .add-media-btn { display: inline-flex; }
- 
+
 /* ── LOAD MORE ── */
 .load-more-wrap { text-align: center; padding: 2rem; }
 .load-more-btn { background: none; border: 1px solid var(--sand); color: var(--muted); font-family: 'Jost', sans-serif; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.6rem 1.5rem; border-radius: 2px; cursor: pointer; transition: all 0.2s; }
 .load-more-btn:hover { border-color: var(--green); color: var(--green); }
- 
+
 /* ── POPUPS ── */
 #welcomePopup { position: fixed; inset: 0; z-index: 500; display: flex; align-items: center; justify-content: center; padding: 2rem; background: rgba(10,14,10,0.6); backdrop-filter: blur(8px); opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
 #welcomePopup.visible { opacity: 1; pointer-events: all; }
@@ -140,7 +140,7 @@ body.admin-mode .add-media-btn { display: inline-flex; }
 .popup-title em { font-style: italic; color: var(--green); }
 .popup-body { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.05rem; color: var(--muted); line-height: 1.7; margin-bottom: 2rem; }
 .popup-btn { background: var(--green); color: var(--cream); border: none; font-family: 'Jost', sans-serif; font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.75rem 2.5rem; border-radius: 2px; cursor: pointer; }
- 
+
 #yearPickerPopup { position: fixed; inset: 0; z-index: 600; display: flex; align-items: center; justify-content: center; padding: 2rem; background: rgba(10,14,10,0.6); backdrop-filter: blur(6px); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
 #yearPickerPopup.visible { opacity: 1; pointer-events: all; }
 .year-picker-card { background: var(--cream); border: 1px solid var(--sand); border-radius: 4px; max-width: 360px; width: 100%; padding: 2.5rem 2rem 2rem; text-align: center; }
@@ -151,7 +151,7 @@ body.admin-mode .add-media-btn { display: inline-flex; }
 .picker-actions { display: flex; gap: 0.75rem; justify-content: center; }
 .btn-primary { background: var(--green); color: var(--cream); border: none; font-family: 'Jost', sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.6rem 1.4rem; border-radius: 2px; cursor: pointer; }
 .btn-ghost { background: none; color: var(--muted); border: 1px solid var(--sand); font-family: 'Jost', sans-serif; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.5rem 1rem; border-radius: 2px; cursor: pointer; }
- 
+
 /* ── LIGHTBOX ── */
 .lightbox { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(10,14,10,0.94); align-items: center; justify-content: center; flex-direction: column; backdrop-filter: blur(6px); }
 .lightbox.open { display: flex; }
@@ -161,8 +161,8 @@ body.admin-mode .add-media-btn { display: inline-flex; }
 .lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); background: none; border: none; color: rgba(232,237,232,0.5); font-size: 2rem; cursor: pointer; padding: 1rem; }
 .lightbox-nav.prev { left: 1rem; }
 .lightbox-nav.next { right: 1rem; }
- 
- 
+
+
   /* ── DELETE BTN ── */
   .delete-btn {
     display: none;
@@ -178,9 +178,50 @@ body.admin-mode .add-media-btn { display: inline-flex; }
   }
   .delete-btn:hover { background: rgba(192,57,43,1); }
   body.admin-mode .media-item:hover .delete-btn { display: block; }
- 
+
+  
+  /* ── ADMIN MEDIA MENU ── */
+  .media-actions {
+    display: none;
+    position: absolute;
+    top: 0.4rem; left: 0.4rem;
+    gap: 0.3rem;
+    z-index: 10;
+  }
+  body.admin-mode .media-item:hover .media-actions { display: flex; }
+
+  .media-action-btn {
+    background: rgba(10,14,10,0.8);
+    border: none; color: var(--dark);
+    font-size: 0.65rem; padding: 0.25rem 0.45rem;
+    border-radius: 2px; cursor: pointer;
+    backdrop-filter: blur(4px);
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .media-action-btn:hover { background: rgba(10,14,10,1); }
+  .media-action-btn.red:hover { background: rgba(192,57,43,0.9); }
+
+  /* ── MOVE YEAR POPUP ── */
+  #moveYearPopup {
+    position: fixed; inset: 0; z-index: 700;
+    display: flex; align-items: center; justify-content: center; padding: 2rem;
+    background: rgba(10,14,10,0.7); backdrop-filter: blur(6px);
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  }
+  #moveYearPopup.visible { opacity: 1; pointer-events: all; }
+  .move-card { background: var(--cream); border: 1px solid var(--sand); border-radius: 4px; max-width: 320px; width: 100%; padding: 2rem; text-align: center; }
+  .move-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 300; color: var(--dark); margin-bottom: 0.5rem; }
+  .move-card p { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.9rem; color: var(--muted); margin-bottom: 1.2rem; }
+  .move-select { width: 100%; font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; border: none; border-bottom: 1px solid var(--sand); background: none; color: var(--dark); text-align: center; padding: 0.3rem 0; outline: none; margin-bottom: 1.5rem; cursor: pointer; }
+  .move-actions { display: flex; gap: 0.75rem; justify-content: center; }
+
+  /* ── DRAG & DROP ── */
+  .media-item.dragging { opacity: 0.4; border: 2px dashed var(--green); }
+  .media-item.drag-over { border: 2px solid var(--green); transform: scale(1.03); }
+
   footer { text-align: center; padding: 3rem 2rem; border-top: 1px solid var(--warm); font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.9rem; color: var(--sand); }
- 
+
 @media (max-width: 600px) {
   .media-grid { grid-template-columns: repeat(2, 1fr); gap: 0.4rem; padding: 1rem; }
   .year-page-top { padding: 1.5rem 1rem 1rem; }
@@ -191,7 +232,7 @@ body.admin-mode .add-media-btn { display: inline-flex; }
 </style>
 </head>
 <body>
- 
+
 <!-- PASSWORD -->
 <div id="passwordScreen">
   <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;color:#7aab7a;text-align:center;margin-bottom:1.2rem;">Pour que rien ne disparaisse vraiment.</p>
@@ -203,7 +244,7 @@ body.admin-mode .add-media-btn { display: inline-flex; }
     <button class="lock-btn" onclick="checkPassword()">Entrer</button>
   </div>
 </div>
- 
+
 <!-- HEADER -->
 <header class="site-header" id="siteHeader" style="display:none;">
   <div class="site-title" onclick="goHome()">M<span>&</span>C — <span>Toi, Moi, Nous</span></div>
@@ -212,7 +253,7 @@ body.admin-mode .add-media-btn { display: inline-flex; }
     <button class="btn-header" onclick="logout()">↩ Quitter</button>
   </div>
 </header>
- 
+
 <!-- WELCOME POPUP -->
 <div id="welcomePopup">
   <div class="popup-card">
@@ -223,7 +264,7 @@ body.admin-mode .add-media-btn { display: inline-flex; }
     <button class="popup-btn" onclick="closePopup()">Voir les photos</button>
   </div>
 </div>
- 
+
 <!-- YEAR PICKER -->
 <div id="yearPickerPopup">
   <div class="year-picker-card">
@@ -237,7 +278,21 @@ body.admin-mode .add-media-btn { display: inline-flex; }
     </div>
   </div>
 </div>
- 
+
+
+<!-- MOVE YEAR POPUP -->
+<div id="moveYearPopup">
+  <div class="move-card">
+    <h3>Déplacer vers…</h3>
+    <p>Choisir l'année de destination</p>
+    <select class="move-select" id="moveYearSelect"></select>
+    <div class="move-actions">
+      <button class="btn-ghost" onclick="closeMovePopup()">Annuler</button>
+      <button class="btn-primary" onclick="confirmMove()">Déplacer</button>
+    </div>
+  </div>
+</div>
+
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
   <button class="lightbox-close" onclick="closeLightbox()">✕</button>
@@ -247,7 +302,7 @@ body.admin-mode .add-media-btn { display: inline-flex; }
   <div id="lightboxCaption" class="lightbox-caption"></div>
   <button class="lightbox-nav next" onclick="navigateLightbox(1)">›</button>
 </div>
- 
+
 <!-- PAGE HOME -->
 <div id="page-home" class="page active">
   <div class="hero">
@@ -265,7 +320,7 @@ body.admin-mode .add-media-btn { display: inline-flex; }
   <div class="year-cards" id="yearCards"></div>
   <footer>Les photos sont là.</footer>
 </div>
- 
+
 <!-- PAGE YEAR -->
 <div id="page-year" class="page">
   <div class="import-bar">
@@ -295,7 +350,7 @@ body.admin-mode .add-media-btn { display: inline-flex; }
     + Ajouter des photos / vidéos
   </label>
 </div>
- 
+
 <script>
 // ─── CONFIG ──────────────────────────────────────────────────────
 const CLD_CLOUD = "dayi1mq7p";
@@ -304,7 +359,7 @@ const CLD_BASE = `https://api.cloudinary.com/v1_1/${CLD_CLOUD}`;
 const JSONBIN_ID = "6a013aaec0954111d805bf21";
 const JSONBIN_KEY = "$2a$10$4Hz/UUK6RZsvPvHvLOfre..2w/um9CLvVlTxkD/DMATQltcgbIq1y";
 const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
- 
+
 // ─── MANIFEST ────────────────────────────────────────────────────
 async function loadManifest() {
   try {
@@ -313,7 +368,7 @@ async function loadManifest() {
     return (await res.json()).record || {};
   } catch(e) { return {}; }
 }
- 
+
 async function saveManifest(data) {
   try { localStorage.setItem('mc_cache', JSON.stringify(data)); } catch(e) {}
   try {
@@ -324,7 +379,7 @@ async function saveManifest(data) {
     });
   } catch(e) { console.error('Save error', e); }
 }
- 
+
 // ─── DATA ────────────────────────────────────────────────────────
 let albumData = {};
 let currentYear = null;
@@ -332,7 +387,7 @@ let currentPageItems = [];
 let currentPageIndex = 0;
 const PAGE_SIZE = 30;
 let isAdmin = false;
- 
+
 async function loadData() {
   try {
     const cache = localStorage.getItem('mc_cache');
@@ -344,21 +399,21 @@ async function loadData() {
   else { albumData = { "2023":{medias:[]},"2024":{medias:[]},"2025":{medias:[]},"2026":{medias:[]} }; await saveManifest(albumData); }
   renderHome();
 }
- 
+
 async function saveData() {
   try { localStorage.setItem('mc_cache', JSON.stringify(albumData)); } catch(e) {}
   await saveManifest(albumData);
 }
- 
+
 // ─── NAVIGATION ──────────────────────────────────────────────────
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
 }
- 
+
 function goHome() { showPage('page-home'); renderHome(); }
- 
+
 function goToYear(year) {
   currentYear = year;
   currentPageIndex = 0;
@@ -366,10 +421,10 @@ function goToYear(year) {
   showPage('page-year');
   renderYearPage();
 }
- 
+
 // ─── HOME ────────────────────────────────────────────────────────
 function renderHome() { renderDailyPhoto(); renderYearCards(); }
- 
+
 function renderYearCards() {
   const container = document.getElementById('yearCards');
   container.innerHTML = '';
@@ -389,7 +444,7 @@ function renderYearCards() {
     container.appendChild(card);
   });
 }
- 
+
 function renderDailyPhoto() {
   const allPhotos = [];
   Object.keys(albumData).sort().forEach(y => (albumData[y]?.medias||[]).forEach(m => { if(m&&m.type==='image') allPhotos.push(m); }));
@@ -403,7 +458,7 @@ function renderDailyPhoto() {
   else if (photo.date) dateStr = photo.date;
   frame.innerHTML = `<img src="${photo.thumb||photo.src}" alt=""><div class="daily-overlay"><span class="daily-caption-text">${photo.caption||''}</span>${dateStr?`<span class="daily-date">${dateStr}</span>`:''}</div>`;
 }
- 
+
 // ─── YEAR PAGE ───────────────────────────────────────────────────
 function renderYearPage() {
   const year = currentYear;
@@ -417,7 +472,7 @@ function renderYearPage() {
   if (yi < years.length-1) { const b = document.createElement('button'); b.className='year-nav-btn'; b.textContent=years[yi+1]+' →'; b.onclick=()=>goToYear(years[yi+1]); nav.appendChild(b); }
   renderGridPage(true);
 }
- 
+
 function renderGridPage(reset=false) {
   const grid = document.getElementById('mediaGrid');
   if (reset) { grid.innerHTML=''; currentPageIndex=0; }
@@ -434,29 +489,56 @@ function renderGridPage(reset=false) {
     }
     if (!thumb) thumb = media.src;
     item.innerHTML = `
-      <button class="delete-btn" onclick="deleteMedia(event, ${idx})">✕</button>
+      <div class="media-actions">
+        <button class="media-action-btn" onclick="openMovePopup(event,${idx})">↗ Année</button>
+        <button class="media-action-btn red" onclick="deleteMedia(event,${idx})">✕</button>
+      </div>
       <img src="${thumb}" alt="${media.caption||''}">
       ${media.type==='video'?'<span class="video-badge">▶</span>':''}
       <div class="caption"><div class="caption-text">${media.caption||''}</div></div>
     `;
     item.addEventListener('click', () => openLightbox(idx));
+
+    // Drag & drop
+    item.draggable = true;
+    item.dataset.idx = idx;
+    item.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', idx);
+      setTimeout(() => item.classList.add('dragging'), 0);
+    });
+    item.addEventListener('dragend', () => item.classList.remove('dragging'));
+    item.addEventListener('dragover', e => { e.preventDefault(); item.classList.add('drag-over'); });
+    item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+    item.addEventListener('drop', e => {
+      e.preventDefault(); e.stopPropagation();
+      item.classList.remove('drag-over');
+      const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
+      const toIdx = idx;
+      if (fromIdx === toIdx) return;
+      const medias = albumData[currentYear].medias;
+      const [moved] = medias.splice(fromIdx, 1);
+      medias.splice(toIdx, 0, moved);
+      currentPageItems = medias.filter(m => m !== null);
+      saveData();
+      renderGridPage(true);
+    });
     grid.appendChild(item);
   });
   currentPageIndex += items.length;
   document.getElementById('loadMoreWrap').style.display = currentPageIndex < currentPageItems.length ? 'block' : 'none';
 }
- 
+
 function loadMore() { renderGridPage(false); }
- 
+
 // ─── LIGHTBOX ────────────────────────────────────────────────────
 let lbCurrent = 0;
- 
+
 function openLightbox(idx) {
   lbCurrent = idx; showLightboxItem();
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
- 
+
 function showLightboxItem() {
   const item = currentPageItems[lbCurrent];
   if (!item) return;
@@ -465,30 +547,30 @@ function showLightboxItem() {
   else { vid.style.display='none'; vid.src=''; img.style.display='block'; img.src=item.src; }
   document.getElementById('lightboxCaption').textContent = item.caption||'';
 }
- 
+
 function closeLightbox(e) {
   if (e && e.target!==document.getElementById('lightbox') && !e.target.classList.contains('lightbox-close')) return;
   document.getElementById('lightbox').classList.remove('open');
   document.getElementById('lightboxVideo').src='';
   document.body.style.overflow='';
 }
- 
+
 function navigateLightbox(dir) {
   lbCurrent = (lbCurrent+dir+currentPageItems.length)%currentPageItems.length;
   showLightboxItem();
 }
- 
+
 document.addEventListener('keydown', e => {
   if (!document.getElementById('lightbox').classList.contains('open')) return;
   if (e.key==='ArrowLeft') navigateLightbox(-1);
   if (e.key==='ArrowRight') navigateLightbox(1);
   if (e.key==='Escape') closeLightbox();
 });
- 
+
 // ─── AUTH ────────────────────────────────────────────────────────
 const PASS_GUEST = "limonaia78120";
 const PASS_ADMIN = "Big38G0NH4WK3M+";
- 
+
 function checkPassword() {
   const input = document.getElementById('lockInput');
   const val = input.value;
@@ -501,7 +583,7 @@ function checkPassword() {
     setTimeout(()=>input.classList.remove('error'),400);
   }
 }
- 
+
 function unlockSite(asAdmin) {
   document.getElementById('passwordScreen').classList.add('hidden');
   setTimeout(()=>document.getElementById('passwordScreen').style.display='none',500);
@@ -512,7 +594,7 @@ function unlockSite(asAdmin) {
   }
   showPopup(); loadData();
 }
- 
+
 const sa = sessionStorage.getItem('mc_auth');
 if (sa==='admin') {
   document.getElementById('passwordScreen').style.display='none';
@@ -525,14 +607,14 @@ if (sa==='admin') {
   document.getElementById('siteHeader').style.display='flex';
   loadData();
 }
- 
+
 function toggleAdmin() {
   isAdmin=!isAdmin; document.body.classList.toggle('admin-mode',isAdmin);
   document.getElementById('adminToggle').textContent=isAdmin?'✦ Terminer':'✦ Gérer';
 }
- 
+
 function logout() { sessionStorage.clear(); location.reload(); }
- 
+
 // ─── POPUP ───────────────────────────────────────────────────────
 function showPopup() {
   if (sessionStorage.getItem('mc_welcomed')) return;
@@ -543,7 +625,7 @@ function closePopup() {
   sessionStorage.setItem('mc_welcomed','1');
 }
 document.getElementById('welcomePopup').addEventListener('click',e=>{ if(e.target===document.getElementById('welcomePopup')) closePopup(); });
- 
+
 // ─── COMPRESSION ─────────────────────────────────────────────────
 function compressImage(file, maxWidth=1920, quality=0.82) {
   return new Promise(resolve=>{
@@ -560,7 +642,7 @@ function compressImage(file, maxWidth=1920, quality=0.82) {
     img.src=url;
   });
 }
- 
+
 // ─── EXIF ────────────────────────────────────────────────────────
 async function readExifDate(file) {
   try {
@@ -569,7 +651,7 @@ async function readExifDate(file) {
     return data?.DateTimeOriginal||data?.DateTime||null;
   } catch(e) { return null; }
 }
- 
+
 // ─── UPLOAD ──────────────────────────────────────────────────────
 async function uploadToCloudinary(file) {
   const isVideo=file.type.startsWith('video');
@@ -593,14 +675,14 @@ async function uploadToCloudinary(file) {
     xhr.send(fd);
   });
 }
- 
+
 function makeMediaObj(result, type, year, exifDate) {
   return { src:result.secure_url, thumb:result.thumb_url||result.secure_url, publicId:result.public_id, type, caption:'', date:year, exifDate:exifDate?exifDate.toISOString():null };
 }
- 
+
 // ─── IMPORT ──────────────────────────────────────────────────────
 let importQueue=[];
- 
+
 async function importAllFiles(input) {
   const files=Array.from(input.files);
   if (!files.length) return;
@@ -631,7 +713,7 @@ async function importAllFiles(input) {
   else setTimeout(()=>prog.classList.remove('visible'),3000);
   input.value='';
 }
- 
+
 async function addMediaToYear(year, input) {
   const files=Array.from(input.files);
   if(!files.length||!year) return;
@@ -646,7 +728,48 @@ async function addMediaToYear(year, input) {
   currentPageItems=(albumData[year]?.medias||[]).filter(m=>m!==null);
   renderGridPage(true); renderHome();
 }
- 
+
+// ─── MOVE YEAR ───────────────────────────────────────────────────
+let moveIdx = null;
+
+function openMovePopup(e, idx) {
+  e.stopPropagation();
+  moveIdx = idx;
+  const sel = document.getElementById('moveYearSelect');
+  sel.innerHTML = Object.keys(albumData).sort()
+    .filter(y => y !== currentYear)
+    .map(y => `<option value="${y}">${y}</option>`).join('');
+  document.getElementById('moveYearPopup').classList.add('visible');
+}
+
+function closeMovePopup() {
+  document.getElementById('moveYearPopup').classList.remove('visible');
+  moveIdx = null;
+}
+
+async function confirmMove() {
+  if (moveIdx === null) return;
+  const destYear = document.getElementById('moveYearSelect').value;
+  const media = albumData[currentYear].medias[moveIdx];
+  if (!media) return;
+
+  // Retirer de l'année actuelle
+  albumData[currentYear].medias.splice(moveIdx, 1);
+  // Ajouter dans l'année destination
+  if (!albumData[destYear]) albumData[destYear] = { medias: [] };
+  albumData[destYear].medias.push({ ...media, date: destYear });
+
+  currentPageItems = albumData[currentYear].medias.filter(m => m !== null);
+  closeMovePopup();
+  await saveData();
+  renderGridPage(true);
+  renderHome();
+}
+
+document.getElementById('moveYearPopup').addEventListener('click', e => {
+  if (e.target === document.getElementById('moveYearPopup')) closeMovePopup();
+});
+
 // ─── DELETE ──────────────────────────────────────────────────────
 async function deleteMedia(e, idx) {
   e.stopPropagation();
@@ -657,7 +780,7 @@ async function deleteMedia(e, idx) {
   renderGridPage(true);
   renderHome();
 }
- 
+
 // ─── TRI ─────────────────────────────────────────────────────────
 function sortAll() {
   Object.keys(albumData).forEach(y=>{
@@ -668,10 +791,10 @@ function sortAll() {
     });
   });
 }
- 
+
 // ─── YEAR PICKER ─────────────────────────────────────────────────
 let currentPickerItem=null;
- 
+
 function processImportQueue() {
   if(!importQueue.length){
     document.getElementById('yearPickerPopup').classList.remove('visible');
@@ -686,7 +809,7 @@ function processImportQueue() {
   document.getElementById('yearPickerFilename').textContent=currentPickerItem.file.name;
   document.getElementById('yearPickerPopup').classList.add('visible');
 }
- 
+
 async function confirmYearPicker() {
   if(!currentPickerItem) return;
   const year=document.getElementById('yearPickerSelect').value;
@@ -696,7 +819,7 @@ async function confirmYearPicker() {
   document.getElementById('yearPickerPopup').classList.remove('visible');
   setTimeout(processImportQueue,300);
 }
- 
+
 function skipYearPicker() {
   document.getElementById('yearPickerPopup').classList.remove('visible');
   setTimeout(processImportQueue,300);
