@@ -754,8 +754,13 @@ async function saveData() {
 
 // ─── NAVIGATION ──────────────────────────────────────────────────
 function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.page').forEach(p => {
+    p.classList.remove('active');
+    p.style.display = 'none';
+  });
+  const target = document.getElementById(id);
+  target.style.display = 'block';
+  target.classList.add('active');
   window.scrollTo(0,0);
 }
 
