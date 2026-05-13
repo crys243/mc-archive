@@ -10,18 +10,14 @@
   button { background: #7aab7a; color: #111; border: none; padding: 0.75rem 2rem; font-size: 1rem; cursor: pointer; border-radius: 2px; margin-bottom: 1.5rem; }
   button:disabled { opacity: 0.5; cursor: not-allowed; }
   #log { white-space: pre-wrap; font-size: 0.85rem; }
-  .ok { color: #7aab7a; }
-  .err { color: #e74c3c; }
-  .info { color: #c8d4c8; }
-  .done { color: #f1c40f; font-weight: bold; }
+  .ok { color: #7aab7a; } .err { color: #e74c3c; } .info { color: #c8d4c8; } .done { color: #f1c40f; font-weight: bold; }
 </style>
 </head>
 <body>
-<h1>🔧 Patch miniatures vidéos — M&C</h1>
-<p>Extrait les public_id directement depuis les URLs stockées dans JSONBin. Pas d'appel API Cloudinary.</p>
+<h1>🔧 Patch miniatures vidéos v2 — M&C</h1>
+<p>Corrige les URLs de miniatures pour toutes les vidéos.</p>
 <button id="runBtn" onclick="run()">Lancer le patch</button>
 <div id="log"></div>
-
 <script>
 const CLD_CLOUD   = "dayi1mq7p";
 const JSONBIN_ID  = "6a013aaec0954111d805bf21";
@@ -34,56 +30,53 @@ function log(msg, cls='info') {
 
 function extractPublicId(url) {
   if (!url) return null;
-  // Supprimer les transformations et l'extension
-  // ex: https://res.cloudinary.com/dayi1mq7p/video/upload/q_auto,f_auto/abc123.mp4
-  // ex: https://res.cloudinary.com/dayi1mq7p/video/upload/abc123.mp4
-  const match = url.match(/\/video\/upload\/(?:[^/]+\/)*([^/?#]+?)(?:\.[^./?#]+)?(?:[?#].*)?$/);
+  // Gérer les URLs avec version: /upload/v1234567890/public_id.ext
+  // et sans version: /upload/public_id.ext
+  // et avec transformations: /upload/q_auto,f_auto/v123/public_id.ext
+  const match = url.match(/\/(?:video|image)\/upload\/(?:[^/]+\/)*?(v\d+\/)?([^/?#.]+(?:\/[^/?#.]+)*)(?:\.[^./?#]+)?(?:[?#].*)?$/);
   if (!match) return null;
-  const candidate = match[1];
-  // Exclure si c'est une transformation cloudinary (contient des virgules)
-  if (candidate.includes(',')) return null;
-  return candidate;
+  return (match[1] || '') + match[2];
 }
 
 async function run() {
   document.getElementById('runBtn').disabled = true;
-  log('=== Démarrage du patch ===\n', 'done');
+  log('=== Démarrage du patch v2 ===\n', 'done');
 
-  // 1. Charger JSONBin
-  log('1. Chargement du manifest JSONBin…');
+  log('1. Chargement JSONBin…');
   let albumData;
   try {
     const res = await fetch(`${JSONBIN_URL}/latest`, { headers: { 'X-Master-Key': JSONBIN_KEY } });
-    if (!res.ok) { log('Erreur JSONBin: ' + res.status, 'err'); return; }
+    if (!res.ok) { log('Erreur: ' + res.status, 'err'); return; }
     albumData = (await res.json()).record;
-    log(`   ✓ Manifest chargé — ${Object.keys(albumData).length} années`, 'ok');
+    log(`   ✓ ${Object.keys(albumData).length} années chargées`, 'ok');
   } catch(e) { log('Erreur: ' + e.message, 'err'); return; }
 
-  // 2. Patcher les vidéos
-  log('\n2. Extraction des public_id depuis les URLs…');
-  let patched = 0, skipped = 0, failed = 0;
+  log('\n2. Reconstruction des miniatures…');
+  let patched = 0;
 
   Object.keys(albumData).forEach(year => {
     (albumData[year]?.medias || []).forEach((media, i) => {
       if (!media || media.type !== 'video') return;
-      if (media.publicId) { skipped++; return; }
 
-      const pid = extractPublicId(media.src);
-      if (pid) {
-        albumData[year].medias[i].publicId = pid;
-        albumData[year].medias[i].thumb = `https://res.cloudinary.com/${CLD_CLOUD}/video/upload/q_auto,f_jpg,w_500,so_0/${pid}.jpg`;
+      const pid = media.publicId || extractPublicId(media.src);
+      if (!pid) { log(`   ? [${year}] Impossible d'extraire: ${(media.src||'').slice(0,60)}`, 'err'); return; }
+
+      // Mettre à jour publicId si manquant
+      if (!media.publicId) albumData[year].medias[i].publicId = pid;
+
+      // Toujours reconstruire le thumb proprement
+      const newThumb = `https://res.cloudinary.com/${CLD_CLOUD}/video/upload/q_auto,f_jpg,w_500,so_0/${pid}.jpg`;
+
+      if (albumData[year].medias[i].thumb !== newThumb) {
+        albumData[year].medias[i].thumb = newThumb;
         log(`   ✓ [${year}] ${pid}`, 'ok');
         patched++;
-      } else {
-        log(`   ? [${year}] Impossible d'extraire: ${(media.src||'').slice(0,70)}`, 'err');
-        failed++;
       }
     });
   });
 
-  log(`\n   Patchées: ${patched} | Déjà ok: ${skipped} | Échecs: ${failed}`, 'done');
+  log(`\n   Mises à jour: ${patched}`, 'done');
 
-  // 3. Sauvegarder
   if (patched > 0) {
     log('\n3. Sauvegarde JSONBin…');
     try {
@@ -92,14 +85,14 @@ async function run() {
         headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
         body: JSON.stringify(albumData)
       });
-      if (res.ok) log('   ✓ JSONBin mis à jour !', 'ok');
-      else log('   Erreur sauvegarde: ' + res.status, 'err');
+      if (res.ok) log('   ✓ Sauvegardé !', 'ok');
+      else log('   Erreur: ' + res.status, 'err');
     } catch(e) { log('Erreur: ' + e.message, 'err'); }
   } else {
     log('\n3. Rien à sauvegarder.', 'info');
   }
 
-  log('\n=== Patch terminé — tu peux fermer cette page ===', 'done');
+  log('\n=== Terminé — ferme cette page ===', 'done');
   document.getElementById('runBtn').disabled = false;
 }
 </script>
