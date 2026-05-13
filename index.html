@@ -225,11 +225,13 @@ body.admin-mode .add-media-btn { display: inline-flex; }
   #page-letter {
     min-height: 100vh;
     background: var(--cream);
+    padding: 4rem 2rem 4rem;
+  }
+  #page-letter.active {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding: 4rem 2rem 4rem;
   }
 
   .letter-wrap {
@@ -571,7 +573,7 @@ body.admin-mode .add-media-btn { display: inline-flex; }
 
 
 <!-- PAGE LETTRE -->
-<div id="page-letter" class="page" style="display:none;">
+<div id="page-letter" class="page">
   <div class="letter-wrap">
 
     <div class="letter-header">
@@ -629,11 +631,7 @@ body.admin-mode .add-media-btn { display: inline-flex; }
 function showLetter() {
   document.getElementById('passwordScreen').classList.add('hidden');
   setTimeout(() => document.getElementById('passwordScreen').style.display='none', 500);
-  document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.display='none'; });
-  const lp = document.getElementById('page-letter');
-  lp.style.display = 'flex';
-  lp.classList.add('active');
-  window.scrollTo(0,0);
+  showPage('page-letter');
   // Lancer la musique automatiquement
   setTimeout(() => {
     const audio = document.getElementById('letterAudio');
@@ -662,10 +660,7 @@ function checkLetterCode() {
       // Afficher le header
       document.getElementById('siteHeader').style.display = 'flex';
       // Remettre toutes les pages en display none sauf home
-      document.querySelectorAll('.page').forEach(p => { p.style.display = 'none'; p.classList.remove('active'); });
-      document.getElementById('page-home').style.display = 'block';
-      document.getElementById('page-home').classList.add('active');
-      // Charger les données
+      showPage('page-home');
       loadData();
     }, 3000);
   } else {
@@ -756,11 +751,9 @@ async function saveData() {
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => {
     p.classList.remove('active');
-    p.style.display = 'none';
+    p.style.removeProperty('display');
   });
-  const target = document.getElementById(id);
-  target.style.display = 'block';
-  target.classList.add('active');
+  document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
 }
 
