@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Patch vidéos — M&C</title>
+<style>
+  body { font-family: monospace; background: #111; color: #7aab7a; padding: 2rem; line-height: 1.6; }
+  h1 { color: #e8ede8; margin-bottom: 0.5rem; font-size: 1.2rem; }
+  p { color: #6a876a; font-size: 0.85rem; margin-bottom: 1.5rem; }
+  button { background: #7aab7a; color: #111; border: none; padding: 0.75rem 2rem; font-size: 1rem; cursor: pointer; border-radius: 2px; margin-bottom: 1.5rem; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  #log { white-space: pre-wrap; font-size: 0.85rem; }
+  .ok { color: #7aab7a; }
+  .err { color: #e74c3c; }
+  .info { color: #c8d4c8; }
+  .done { color: #f1c40f; font-weight: bold; }
+</style>
+</head>
+<body>
+<h1>🔧 Patch miniatures vidéos — M&C</h1>
+<p>Extrait les public_id directement depuis les URLs stockées dans JSONBin. Pas d'appel API Cloudinary.</p>
+<button id="runBtn" onclick="run()">Lancer le patch</button>
+<div id="log"></div>
+
+<script>
+const CLD_CLOUD   = "dayi1mq7p";
+const JSONBIN_ID  = "6a013aaec0954111d805bf21";
+const JSONBIN_KEY = "$2a$10$4Hz/UUK6RZsvPvHvLOfre..2w/um9CLvVlTxkD/DMATQltcgbIq1y";
+const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
+
+function log(msg, cls='info') {
+  document.getElementById('log').innerHTML += `<span class="${cls}">${msg}</span>\n`;
+}
+
+function extractPublicId(url) {
+  if (!url) return null;
+  // Supprimer les transformations et l'extension
+  // ex: https://res.cloudinary.com/dayi1mq7p/video/upload/q_auto,f_auto/abc123.mp4
+  // ex: https://res.cloudinary.com/dayi1mq7p/video/upload/abc123.mp4
+  const match = url.match(/\/video\/upload\/(?:[^/]+\/)*([^/?#]+?)(?:\.[^./?#]+)?(?:[?#].*)?$/);
+  if (!match) return null;
+  const candidate = match[1];
+  // Exclure si c'est une transformation cloudinary (contient des virgules)
+  if (candidate.includes(',')) return null;
+  return candidate;
+}
+
+async function run() {
+  document.getElementById('runBtn').disabled = true;
+  log('=== Démarrage du patch ===\n', 'done');
+
+  // 1. Charger JSONBin
+  log('1. Chargement du manifest JSONBin…');
+  let albumData;
+  try {
+    const res = await fetch(`${JSONBIN_URL}/latest`, { headers: { 'X-Master-Key': JSONBIN_KEY } });
+    if (!res.ok) { log('Erreur JSONBin: ' + res.status, 'err'); return; }
+    albumData = (await res.json()).record;
+    log(`   ✓ Manifest chargé — ${Object.keys(albumData).length} années`, 'ok');
+  } catch(e) { log('Erreur: ' + e.message, 'err'); return; }
+
+  // 2. Patcher les vidéos
+  log('\n2. Extraction des public_id depuis les URLs…');
+  let patched = 0, skipped = 0, failed = 0;
+
+  Object.keys(albumData).forEach(year => {
+    (albumData[year]?.medias || []).forEach((media, i) => {
+      if (!media || media.type !== 'video') return;
+      if (media.publicId) { skipped++; return; }
+
+      const pid = extractPublicId(media.src);
+      if (pid) {
+        albumData[year].medias[i].publicId = pid;
+        albumData[year].medias[i].thumb = `https://res.cloudinary.com/${CLD_CLOUD}/video/upload/q_auto,f_jpg,w_500,so_0/${pid}.jpg`;
+        log(`   ✓ [${year}] ${pid}`, 'ok');
+        patched++;
+      } else {
+        log(`   ? [${year}] Impossible d'extraire: ${(media.src||'').slice(0,70)}`, 'err');
+        failed++;
+      }
+    });
+  });
+
+  log(`\n   Patchées: ${patched} | Déjà ok: ${skipped} | Échecs: ${failed}`, 'done');
+
+  // 3. Sauvegarder
+  if (patched > 0) {
+    log('\n3. Sauvegarde JSONBin…');
+    try {
+      const res = await fetch(JSONBIN_URL, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
+        body: JSON.stringify(albumData)
+      });
+      if (res.ok) log('   ✓ JSONBin mis à jour !', 'ok');
+      else log('   Erreur sauvegarde: ' + res.status, 'err');
+    } catch(e) { log('Erreur: ' + e.message, 'err'); }
+  } else {
+    log('\n3. Rien à sauvegarder.', 'info');
+  }
+
+  log('\n=== Patch terminé — tu peux fermer cette page ===', 'done');
+  document.getElementById('runBtn').disabled = false;
+}
+</script>
+</body>
+</html>
