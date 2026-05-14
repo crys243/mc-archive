@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <script src="https://cdn.jsdelivr.net/npm/exifr@7/dist/lite.umd.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -441,159 +440,6 @@ body.admin-mode .add-media-btn { display: inline-flex; }
   }
   .letter-success.visible { display: block; }
 
-  
-  /* ── JOURNAL PAGE ── */
-  #page-journal {
-    min-height: 100vh;
-    background: var(--cream);
-    padding: 4rem 2rem;
-    display: none;
-    flex-direction: column;
-    align-items: center;
-  }
-  #page-journal.active { display: flex; }
-
-  .journal-wrap { max-width: 520px; width: 100%; }
-
-  .journal-lock {
-    text-align: center;
-    padding: 3rem 0;
-  }
-
-  .journal-lock-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 2rem; font-weight: 300; color: var(--dark);
-    margin-bottom: 0.5rem;
-  }
-
-  .journal-lock-sub {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic; font-size: 1rem; color: var(--muted);
-    margin-bottom: 1.5rem;
-  }
-
-  /* Mood form */
-  .journal-form { display: none; }
-  .journal-form.visible { display: block; }
-
-  .journal-greeting {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.6rem; font-weight: 300; color: var(--dark);
-    margin-bottom: 0.4rem;
-  }
-
-  .journal-greeting em { font-style: italic; color: var(--green); }
-
-  .journal-free {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic; font-size: 0.95rem; color: var(--muted);
-    margin-bottom: 2.5rem; line-height: 1.6;
-  }
-
-  .journal-question {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.2rem; font-weight: 300; color: var(--dark);
-    margin-bottom: 1.2rem;
-  }
-
-  /* Score slider */
-  .mood-slider-wrap { margin-bottom: 2rem; }
-  .mood-slider {
-    width: 100%; -webkit-appearance: none;
-    height: 2px; background: var(--sand); border-radius: 1px; outline: none;
-    margin-bottom: 0.75rem;
-  }
-  .mood-slider::-webkit-slider-thumb {
-    -webkit-appearance: none; width: 20px; height: 20px;
-    border-radius: 50%; background: var(--green); cursor: pointer;
-  }
-  .mood-labels {
-    display: flex; justify-content: space-between;
-    font-family: 'Jost', sans-serif; font-size: 0.68rem;
-    letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
-  }
-  .mood-value {
-    text-align: center; font-family: 'Cormorant Garamond', serif;
-    font-size: 3rem; font-weight: 300; color: var(--green);
-    line-height: 1; margin-bottom: 0.5rem;
-  }
-
-  /* Follow-up */
-  .journal-followup { margin-bottom: 2rem; }
-  .journal-followup-q {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic; font-size: 1.05rem; color: var(--text);
-    margin-bottom: 0.75rem; line-height: 1.5;
-  }
-  .journal-textarea {
-    width: 100%; min-height: 100px;
-    background: var(--warm); border: 1px solid var(--sand);
-    border-radius: 3px; color: var(--text);
-    font-family: 'Cormorant Garamond', serif; font-style: italic;
-    font-size: 1rem; padding: 0.85rem 1rem; outline: none; resize: vertical;
-    transition: border-color 0.2s; line-height: 1.6;
-  }
-  .journal-textarea:focus { border-color: var(--green); }
-
-  .journal-submit {
-    background: var(--green); color: var(--cream); border: none;
-    font-family: 'Jost', sans-serif; font-size: 0.72rem;
-    letter-spacing: 0.15em; text-transform: uppercase;
-    padding: 0.75rem 2rem; border-radius: 2px; cursor: pointer;
-    width: 100%; transition: background 0.2s; margin-bottom: 3rem;
-  }
-  .journal-submit:hover { background: var(--green-light); }
-
-  /* Confirmation */
-  .journal-confirm {
-    display: none; text-align: center; padding: 2rem 0;
-  }
-  .journal-confirm.visible { display: block; }
-  .journal-confirm-icon { font-size: 2.5rem; margin-bottom: 1rem; }
-  .journal-confirm-text {
-    font-family: 'Cormorant Garamond', serif; font-style: italic;
-    font-size: 1.1rem; color: var(--green-light); line-height: 1.7;
-    margin-bottom: 2rem;
-  }
-
-  /* Historique */
-  .journal-history { margin-top: 3rem; border-top: 1px solid var(--sand); padding-top: 2rem; }
-  .journal-history-title {
-    font-family: 'Jost', sans-serif; font-size: 0.68rem;
-    letter-spacing: 0.2em; text-transform: uppercase; color: var(--green);
-    margin-bottom: 1.5rem;
-  }
-  .journal-entry {
-    background: var(--warm); border-radius: 3px; padding: 1.2rem 1.3rem;
-    margin-bottom: 1rem; border-left: 2px solid var(--sand);
-  }
-  .journal-entry-meta {
-    font-family: 'Jost', sans-serif; font-size: 0.65rem;
-    letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
-    margin-bottom: 0.5rem; display: flex; justify-content: space-between;
-  }
-  .journal-entry-score {
-    font-family: 'Cormorant Garamond', serif; font-size: 1.8rem;
-    font-weight: 300; color: var(--green); line-height: 1; margin-bottom: 0.5rem;
-  }
-  .journal-entry-text {
-    font-family: 'Cormorant Garamond', serif; font-style: italic;
-    font-size: 0.95rem; color: var(--text); line-height: 1.6;
-  }
-  .journal-empty {
-    font-family: 'Cormorant Garamond', serif; font-style: italic;
-    font-size: 0.95rem; color: var(--muted); text-align: center; padding: 2rem 0;
-  }
-
-  /* Bouton journal dans le header */
-  .btn-journal {
-    background: none; border: 1px solid var(--sand); color: var(--muted);
-    font-family: 'Jost', sans-serif; font-size: 0.72rem; letter-spacing: 0.1em;
-    text-transform: uppercase; padding: 0.4rem 0.9rem; border-radius: 2px;
-    cursor: pointer; transition: all 0.2s;
-  }
-  .btn-journal:hover { border-color: var(--green); color: var(--green); }
-
   footer { text-align: center; padding: 3rem 2rem; border-top: 1px solid var(--warm); font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.9rem; color: var(--sand); }
 
 @media (max-width: 600px) {
@@ -624,7 +470,6 @@ body.admin-mode .add-media-btn { display: inline-flex; }
   <div class="site-title" onclick="goHome()">M<span>&</span>C — <span>Toi, Moi, Nous</span></div>
   <div class="header-actions">
     <button class="btn-header" id="adminToggle" onclick="toggleAdmin()" style="display:none;">✦ Gérer</button>
-    <button class="btn-journal" id="journalBtn" onclick="goToJournal()" style="display:none;">✦ Journal</button>
     <button class="btn-header" onclick="logout()">↩ Quitter</button>
   </div>
 </header>
@@ -754,7 +599,7 @@ body.admin-mode .add-media-btn { display: inline-flex; }
       <p>Mais malgré tout ça, ce qu'on a vécu était réel. Quasiment 3 ans de notre vie, ça ne s'efface pas comme si ça n'avait jamais existé. Même si on s'est disputés, même si certaines choses ont été dites ou faites, je ne voulais pas que notre histoire se perde complètement.</p>
       <p>Quand tu m'as dit que tu avais supprimé nos photos, ça m'a marqué. Alors j'ai voulu créer un endroit où tous ces souvenirs existent encore pour que tu puisses toujours y avoir accès si un jour tu en ressens l'envie.</p>
       <p>J'aimerais surtout que tu te rappelles des bonnes choses. Des moments sincères, des fous rires, des voyages, des habitudes qu'on avait, de tout ce qu'on a construit ensemble.</p>
-      <p>Et je veux aussi que tu saches que j'essaie réellement de changer certaines choses chez moi. Pas seulement pour toi, mais aussi pour moi-même. Je sais que tu peux douter que j'en sois capable, et honnêtement je comprends pourquoi. Mais malgré ça, j'essaie.</p>
+      <p>Et je veux aussi que tu saches que je tiens réellement de changer certaines choses chez moi. Pas seulement pour toi, mais aussi pour moi-même. Je sais que tu peux douter que j'en sois capable, et honnêtement je comprends pourquoi. Mais malgré ça, j'ai réellment la volonté de devnir une meilleure personne.</p>
       <p>Peu importe ce qu'il arrive ensuite entre nous, notre histoire a existé, et elle comptera toujours pour moi.</p>
       <p>Et maintenant… il te reste encore un dernier mystère à résoudre.</p>
       <p>Trouve le deuxième code, et tu pourras accéder à toutes les photos.</p>
@@ -773,60 +618,6 @@ body.admin-mode .add-media-btn { display: inline-flex; }
       </div>
       <div class="letter-success" id="letterSuccess">
         ✓ Tu y es&nbsp;! La prochaine fois, tu peux entrer directement ce code sur la page d'accueil — plus besoin de passer par la lettre.
-      </div>
-    </div>
-
-  </div>
-</div>
-
-
-
-<!-- PAGE JOURNAL -->
-<div id="page-journal" class="page">
-  <div class="journal-wrap">
-
-    <!-- Lock -->
-    <div class="journal-lock" id="journalLock">
-      <p style="font-family:'Jost',sans-serif;font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--green);margin-bottom:1rem;">✦ Espace personnel</p>
-      <h2 class="journal-lock-title">Journal intime</h2>
-      <p class="journal-lock-sub">Un espace rien que pour toi, pour poser les choses.</p>
-      <div class="lock-form" style="margin-top:1.5rem;">
-        <input class="lock-input" id="journalInput" type="password" placeholder="••••••" maxlength="30" onkeydown="if(event.key==='Enter') checkJournalCode()">
-        <div class="lock-error" id="journalError">Code incorrect.</div>
-        <button class="lock-btn" onclick="checkJournalCode()">Entrer</button>
-      </div>
-    </div>
-
-    <!-- Form -->
-    <div class="journal-form" id="journalForm">
-      <h2 class="journal-greeting">Bonjour, <em>Maÿlis</em> ✦</h2>
-      <p class="journal-free">Tu es libre de venir vider ou non ton sac à tout moment. Pas de jugement, pas d'obligation — juste un espace à toi.</p>
-
-      <p class="journal-question">Comment tu te sens aujourd'hui ?</p>
-
-      <div class="mood-slider-wrap">
-        <div class="mood-value" id="moodValue">5</div>
-        <input type="range" class="mood-slider" id="moodSlider" min="1" max="10" value="5" oninput="updateMood(this.value)">
-        <div class="mood-labels"><span>Pas bien du tout</span><span>Au top ✨</span></div>
-      </div>
-
-      <div class="journal-followup" id="journalFollowup"></div>
-
-      <textarea class="journal-textarea" id="journalText" placeholder="Écris ce que tu veux ici…" rows="4"></textarea>
-
-      <button class="journal-submit" onclick="submitJournal()">Poser les choses ✦</button>
-
-      <!-- Confirmation -->
-      <div class="journal-confirm" id="journalConfirm">
-        <div class="journal-confirm-icon">✦</div>
-        <p class="journal-confirm-text" id="journalConfirmText"></p>
-        <button class="btn-ghost" onclick="resetJournalForm()">Nouvelle entrée</button>
-      </div>
-
-      <!-- Historique -->
-      <div class="journal-history">
-        <p class="journal-history-title">✦ Ton journal</p>
-        <div id="journalEntries"></div>
       </div>
     </div>
 
@@ -901,155 +692,6 @@ function seekAudio(e) {
   const bar = document.getElementById('audioProgress');
   const pct = e.offsetX / bar.offsetWidth;
   audio.currentTime = pct * audio.duration;
-}
-
-
-// ─── JOURNAL CONFIG ───────────────────────────────────────────────
-const JOURNAL_PASS = "jacqueline";
-const JOURNAL_BIN_ID = "6a062ff7250b1311c34f5167";
-const JOURNAL_BIN_URL = `https://api.jsonbin.io/v3/b/${JOURNAL_BIN_ID}`;
-const EMAILJS_SERVICE = "service_pob5ep5";
-const EMAILJS_TEMPLATE = "template_cy90ix9";
-const EMAILJS_KEY = "bO_SSrXq_J07t-TJR";
-
-let journalUnlocked = false;
-let journalEntries = [];
-
-function goToJournal() {
-  showPage('page-journal');
-  if (journalUnlocked) loadJournalEntries();
-}
-
-function checkJournalCode() {
-  const input = document.getElementById('journalInput');
-  if (input.value === JOURNAL_PASS) {
-    journalUnlocked = true;
-    document.getElementById('journalLock').style.display = 'none';
-    document.getElementById('journalForm').classList.add('visible');
-    updateMood(5);
-    loadJournalEntries();
-  } else {
-    input.classList.add('error');
-    document.getElementById('journalError').classList.add('visible');
-    input.value = '';
-    setTimeout(() => input.classList.remove('error'), 400);
-  }
-}
-
-function updateMood(val) {
-  document.getElementById('moodValue').textContent = val;
-  const followup = document.getElementById('journalFollowup');
-  if (parseInt(val) >= 6) {
-    followup.innerHTML = `
-      <p class="journal-followup-q">C'est bien ✨ Qu'est-ce qui te rend heureuse aujourd'hui ?</p>
-    `;
-  } else {
-    followup.innerHTML = `
-      <p class="journal-followup-q">Qu'est-ce que tu aurais aimé faire aujourd'hui ?</p>
-    `;
-  }
-}
-
-async function submitJournal() {
-  const score = document.getElementById('moodSlider').value;
-  const text = document.getElementById('journalText').value.trim();
-  const now = new Date();
-  const date = now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  const heure = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-
-  const entry = {
-    score: parseInt(score),
-    text: text || '(rien écrit)',
-    date,
-    heure,
-    timestamp: now.toISOString()
-  };
-
-  // Sauvegarder dans JSONBin
-  try {
-    const res = await fetch(`${JOURNAL_BIN_URL}/latest`, { headers: { 'X-Master-Key': JSONBIN_KEY } });
-    const data = await res.json();
-    const entries = data.record?.entries || [];
-    entries.unshift(entry); // Plus récent en premier
-    await fetch(JOURNAL_BIN_URL, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
-      body: JSON.stringify({ entries })
-    });
-    journalEntries = entries;
-  } catch(e) { console.error('Journal save error', e); }
-
-  // Envoyer email via EmailJS
-  try {
-    const mood = parseInt(score);
-    let reponse = text || '(rien écrit)';
-    if (mood >= 6) reponse = `Ce qui la rend heureuse : ${reponse}`;
-    else reponse = `Ce qu'elle aurait aimé faire : ${reponse}`;
-
-    await emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, {
-      date,
-      heure,
-      score,
-      reponse
-    }, EMAILJS_KEY);
-  } catch(e) { console.error('EmailJS error', e); }
-
-  // Afficher confirmation
-  const form = document.getElementById('journalForm');
-  const confirm = document.getElementById('journalConfirm');
-  const confirmText = document.getElementById('journalConfirmText');
-  document.getElementById('journalText').style.display = 'none';
-  document.querySelector('.journal-submit').style.display = 'none';
-  document.querySelector('.mood-slider-wrap').style.display = 'none';
-  document.querySelector('.journal-followup').style.display = 'none';
-  document.querySelector('.journal-question').style.display = 'none';
-
-  if (parseInt(score) >= 6) {
-    confirmText.textContent = "C'est noté ✦ Garde cette énergie avec toi. Demain aussi sera une belle journée.";
-  } else {
-    confirmText.textContent = "C'est noté ✦ Peu importe comment aujourd'hui s'est passé, tu as le droit de ne pas aller bien. Demain est un autre jour, et tu es plus forte que tu ne le crois.";
-  }
-  confirm.classList.add('visible');
-  loadJournalEntries();
-}
-
-function resetJournalForm() {
-  document.getElementById('journalText').style.display = 'block';
-  document.getElementById('journalText').value = '';
-  document.querySelector('.journal-submit').style.display = 'block';
-  document.querySelector('.mood-slider-wrap').style.display = 'block';
-  document.querySelector('.journal-followup').style.display = 'block';
-  document.querySelector('.journal-question').style.display = 'block';
-  document.getElementById('journalConfirm').classList.remove('visible');
-  document.getElementById('moodSlider').value = 5;
-  updateMood(5);
-}
-
-async function loadJournalEntries() {
-  try {
-    const res = await fetch(`${JOURNAL_BIN_URL}/latest`, { headers: { 'X-Master-Key': JSONBIN_KEY } });
-    const data = await res.json();
-    journalEntries = data.record?.entries || [];
-    renderJournalEntries();
-  } catch(e) { console.error('Journal load error', e); }
-}
-
-function renderJournalEntries() {
-  const container = document.getElementById('journalEntries');
-  if (!journalEntries.length) {
-    container.innerHTML = '<p class="journal-empty">Ton journal est vide pour l'instant.</p>';
-    return;
-  }
-  container.innerHTML = journalEntries.map(e => `
-    <div class="journal-entry">
-      <div class="journal-entry-meta">
-        <span>${e.date}</span>
-        <span>${e.heure}</span>
-      </div>
-      <div class="journal-entry-score">${e.score}/10</div>
-      <div class="journal-entry-text">${e.text}</div>
-    </div>
-  `).join('');
 }
 
 // ─── CONFIG ──────────────────────────────────────────────────────
@@ -1314,7 +956,6 @@ if (sa==='letter') {
 } else if (sa==='guest') {
   document.getElementById('passwordScreen').style.display='none';
   document.getElementById('siteHeader').style.display='flex';
-  document.getElementById('journalBtn').style.display='inline-block';
   loadData();
 }
 
