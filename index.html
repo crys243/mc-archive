@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M&C — Notre archive officielle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script src="https://cdn.jsdelivr.net/npm/exifr@7/dist/lite.umd.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream: #1a1f1a;
+  --warm: #222922;
+  --sand: #3d4f3d;
+  --green: #7aab7a;
+  --green-light: #a0c8a0;
+  --dark: #e8ede8;
+  --text: #c8d4c8;
+  --muted: #6a876a;
+}
+
+html { scroll-behavior: smooth; }
+body { background: var(--cream); color: var(--text); font-family: 'Jost', sans-serif; font-weight: 300; min-height: 100vh; }
+
+/* ── PASSWORD ── */
+#passwordScreen {
+  position: fixed; inset: 0; z-index: 999;
+  background: var(--cream);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 2rem; padding: 2rem; transition: opacity 0.5s ease;
+}
+#passwordScreen.hidden { opacity: 0; pointer-events: none; }
+.lock-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.5rem, 8vw, 4.5rem); font-weight: 300; color: var(--dark); text-align: center; line-height: 1.1; }
+.lock-title em { font-style: italic; color: var(--green); }
+.lock-sub { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1rem; color: var(--muted); text-align: center; }
+.lock-form { display: flex; flex-direction: column; align-items: center; gap: 1rem; width: 100%; max-width: 280px; }
+.lock-input { width: 100%; text-align: center; font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 300; letter-spacing: 0.4em; border: none; border-bottom: 1px solid var(--sand); background: none; color: var(--dark); padding: 0.4rem 0; outline: none; transition: border-color 0.2s; }
+.lock-input:focus { border-color: var(--green); }
+.lock-input.error { border-color: #c0392b; animation: shake 0.35s ease; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-7px)} 75%{transform:translateX(7px)} }
+.lock-btn { background: var(--green); color: var(--cream); border: none; font-family: 'Jost', sans-serif; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.75rem 2rem; border-radius: 2px; cursor: pointer; transition: background 0.2s; width: 100%; }
+.lock-btn:hover { background: var(--green-light); }
+.lock-error { font-size: 0.75rem; color: #c0392b; opacity: 0; transition: opacity 0.2s; min-height: 1rem; }
+.lock-error.visible { opacity: 1; }
+
+/* ── HEADER ── */
+.site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: var(--cream); border-bottom: 1px solid var(--warm); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+.site-title { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 300; font-style: italic; color: var(--text); cursor: pointer; text-decoration: none; }
+.site-title span { font-style: normal; color: var(--green); }
+.header-actions { display: flex; gap: 0.75rem; align-items: center; }
+.btn-header { background: none; border: 1px solid var(--sand); color: var(--muted); font-family: 'Jost', sans-serif; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.4rem 0.9rem; border-radius: 2px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.btn-header:hover { border-color: var(--green); color: var(--green); }
+
+/* ── PAGES ── */
+.page { display: none; min-height: 100vh; }
+.page.active { display: block; }
+
+/* ── HOME HERO ── */
+.hero { margin-top: 64px; padding: 5rem 2rem 3rem; text-align: center; background: linear-gradient(to bottom, var(--warm) 0%, var(--cream) 100%); position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 0%, rgba(122,171,122,0.08) 0%, transparent 70%); }
+.hero-eyebrow { font-family: 'Jost', sans-serif; font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--green); margin-bottom: 1.2rem; }
+.hero-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(3rem, 8vw, 6rem); font-weight: 300; line-height: 1; color: var(--dark); margin-bottom: 1rem; }
+.hero-title em { font-style: italic; color: var(--green); }
+.hero-sub { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.15rem; color: var(--muted); max-width: 400px; margin: 0 auto; line-height: 1.6; }
+
+/* ── DAILY ── */
+.daily-section { max-width: 700px; margin: 2rem auto 3rem; padding: 0 2rem; }
+.daily-label { font-family: 'Jost', sans-serif; font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--green); margin-bottom: 1rem; text-align: center; }
+.daily-frame { position: relative; border-radius: 4px; overflow: hidden; background: var(--warm); aspect-ratio: 3/2; }
+.daily-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.daily-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(10,14,10,0.75) 0%, transparent 100%); padding: 2.5rem 1.5rem 1.2rem; display: flex; justify-content: space-between; align-items: flex-end; }
+.daily-caption-text { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1rem; color: rgba(232,237,232,0.9); }
+.daily-date { font-family: 'Jost', sans-serif; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(232,237,232,0.6); white-space: nowrap; margin-left: 1rem; }
+.daily-empty { display: flex; align-items: center; justify-content: center; height: 200px; color: var(--muted); font-family: 'Cormorant Garamond', serif; font-style: italic; }
+
+/* ── YEAR CARDS ── */
+.section-label { font-family: 'Jost', sans-serif; font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--green); margin-bottom: 1.5rem; text-align: center; }
+.year-cards { max-width: 900px; margin: 0 auto 4rem; padding: 0 2rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+.year-card { background: var(--warm); border-radius: 4px; overflow: hidden; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; border: 1px solid var(--sand); aspect-ratio: 4/3; position: relative; }
+.year-card:hover { transform: scale(1.02); box-shadow: 0 8px 32px rgba(10,14,10,0.4); }
+.year-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.year-card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,14,10,0.8) 0%, rgba(10,14,10,0.1) 60%); display: flex; flex-direction: column; justify-content: flex-end; padding: 1rem; }
+.year-card-label { font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; font-weight: 300; color: var(--dark); line-height: 1; }
+.year-card-count { font-family: 'Jost', sans-serif; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(232,237,232,0.6); margin-top: 0.2rem; }
+
+/* ── YEAR PAGE ── */
+.year-page-top { margin-top: 64px; padding: 2.5rem 2rem 1.5rem; display: flex; align-items: baseline; gap: 1.5rem; border-bottom: 1px solid var(--warm); max-width: 1200px; margin-left: auto; margin-right: auto; margin-top: 64px; }
+.year-page-title { font-family: 'Cormorant Garamond', serif; font-size: 4rem; font-weight: 300; color: var(--green); line-height: 1; }
+.year-page-count { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--sand); }
+.year-page-nav { display: flex; gap: 0.5rem; margin-left: auto; }
+.year-nav-btn { background: none; border: 1px solid var(--sand); color: var(--muted); font-family: 'Jost', sans-serif; font-size: 0.7rem; letter-spacing: 0.08em; padding: 0.3rem 0.7rem; border-radius: 2px; cursor: pointer; transition: all 0.2s; }
+.year-nav-btn:hover { border-color: var(--green); color: var(--green); }
+
+/* ── IMPORT BAR ── */
+.import-bar { display: none; background: var(--warm); border-bottom: 1px solid var(--sand); padding: 1rem 2rem; text-align: center; position: sticky; top: 64px; z-index: 90; }
+body.admin-mode .import-bar { display: block; }
+.import-bar-inner { display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+.import-label { font-family: 'Jost', sans-serif; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.import-btn { background: var(--green); color: var(--cream); border: none; font-family: 'Jost', sans-serif; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.6rem 1.4rem; border-radius: 2px; cursor: pointer; position: relative; overflow: hidden; }
+.import-btn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.progress-wrap { display: none; width: 100%; max-width: 400px; margin: 0.75rem auto 0; }
+.progress-wrap.visible { display: block; }
+.progress-track { height: 2px; background: var(--sand); border-radius: 1px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--green); width: 0%; transition: width 0.2s; }
+.progress-text { font-family: 'Jost', sans-serif; font-size: 0.68rem; color: var(--muted); margin-top: 0.4rem; text-align: center; }
+
+/* ── MEDIA GRID ── */
+.media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.6rem; padding: 1.5rem 2rem; max-width: 1200px; margin: 0 auto; }
+.media-item { position: relative; background: var(--warm); border-radius: 3px; overflow: hidden; aspect-ratio: 4/3; cursor: pointer; transition: transform 0.25s, box-shadow 0.25s; }
+.media-item.tall { aspect-ratio: 3/4; }
+.media-item.square { aspect-ratio: 1; }
+.media-item:hover { transform: scale(1.015); box-shadow: 0 8px 32px rgba(10,14,10,0.4); z-index: 2; }
+.media-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.caption { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(10,14,10,0.7) 0%, transparent 100%); padding: 1.5rem 0.75rem 0.6rem; opacity: 0; transition: opacity 0.2s; }
+.media-item:hover .caption { opacity: 1; }
+.caption-text { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.85rem; color: rgba(232,237,232,0.9); }
+.video-badge { position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(10,14,10,0.6); color: var(--dark); font-size: 0.7rem; padding: 0.25rem 0.5rem; border-radius: 2px; }
+
+.add-media-btn { display: none; margin: 1rem 2rem; align-items: center; gap: 0.5rem; background: none; border: 1px solid var(--warm); color: var(--muted); font-family: 'Jost', sans-serif; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.5rem 1rem; border-radius: 2px; cursor: pointer; transition: all 0.2s; position: relative; }
+.add-media-btn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.add-media-btn:hover { border-color: var(--green); color: var(--green); }
+body.admin-mode .add-media-btn { display: inline-flex; }
+
+/* ── LOAD MORE ── */
+.load-more-wrap { text-align: center; padding: 2rem; }
+.load-more-btn { background: none; border: 1px solid var(--sand); color: var(--muted); font-family: 'Jost', sans-serif; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.6rem 1.5rem; border-radius: 2px; cursor: pointer; transition: all 0.2s; }
+.load-more-btn:hover { border-color: var(--green); color: var(--green); }
+
+/* ── POPUPS ── */
+#welcomePopup { position: fixed; inset: 0; z-index: 500; display: flex; align-items: center; justify-content: center; padding: 2rem; background: rgba(10,14,10,0.6); backdrop-filter: blur(8px); opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
+#welcomePopup.visible { opacity: 1; pointer-events: all; }
+.popup-card { background: var(--cream); border: 1px solid var(--sand); border-radius: 4px; max-width: 420px; width: 100%; padding: 3rem 2.5rem 2rem; text-align: center; position: relative; box-shadow: 0 24px 64px rgba(10,14,10,0.5); transform: translateY(12px); transition: transform 0.5s; }
+#welcomePopup.visible .popup-card { transform: translateY(0); }
+.popup-close { position: absolute; top: 1rem; right: 1.2rem; background: none; border: none; color: var(--sand); font-size: 1.1rem; cursor: pointer; }
+.popup-eyebrow { font-family: 'Jost', sans-serif; font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--green); margin-bottom: 1rem; }
+.popup-title { font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; font-weight: 300; color: var(--dark); margin-bottom: 1.2rem; }
+.popup-title em { font-style: italic; color: var(--green); }
+.popup-body { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.05rem; color: var(--muted); line-height: 1.7; margin-bottom: 2rem; }
+.popup-btn { background: var(--green); color: var(--cream); border: none; font-family: 'Jost', sans-serif; font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.75rem 2.5rem; border-radius: 2px; cursor: pointer; }
+
+#yearPickerPopup { position: fixed; inset: 0; z-index: 600; display: flex; align-items: center; justify-content: center; padding: 2rem; background: rgba(10,14,10,0.6); backdrop-filter: blur(6px); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+#yearPickerPopup.visible { opacity: 1; pointer-events: all; }
+.year-picker-card { background: var(--cream); border: 1px solid var(--sand); border-radius: 4px; max-width: 360px; width: 100%; padding: 2.5rem 2rem 2rem; text-align: center; }
+.year-picker-title { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 300; color: var(--dark); margin-bottom: 0.5rem; }
+.year-picker-sub { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.9rem; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.5; }
+.year-picker-filename { font-family: 'Jost', sans-serif; font-size: 0.72rem; color: var(--green); background: var(--warm); padding: 0.4rem 0.8rem; border-radius: 2px; margin-bottom: 1.5rem; display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.year-picker-select { width: 100%; font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; border: none; border-bottom: 1px solid var(--sand); background: none; color: var(--dark); text-align: center; padding: 0.3rem 0; outline: none; margin-bottom: 1.5rem; cursor: pointer; }
+.picker-actions { display: flex; gap: 0.75rem; justify-content: center; }
+.btn-primary { background: var(--green); color: var(--cream); border: none; font-family: 'Jost', sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.6rem 1.4rem; border-radius: 2px; cursor: pointer; }
+.btn-ghost { background: none; color: var(--muted); border: 1px solid var(--sand); font-family: 'Jost', sans-serif; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.5rem 1rem; border-radius: 2px; cursor: pointer; }
+
+/* ── LIGHTBOX ── */
+.lightbox { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(10,14,10,0.94); align-items: center; justify-content: center; flex-direction: column; backdrop-filter: blur(6px); }
+.lightbox.open { display: flex; }
+.lightbox-media { max-width: 90vw; max-height: 80vh; border-radius: 3px; object-fit: contain; }
+.lightbox-close { position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: none; color: rgba(232,237,232,0.6); font-size: 1.5rem; cursor: pointer; }
+.lightbox-caption { margin-top: 1rem; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1rem; color: rgba(232,237,232,0.7); }
+.lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); background: none; border: none; color: rgba(232,237,232,0.5); font-size: 2rem; cursor: pointer; padding: 1rem; }
+.lightbox-nav.prev { left: 1rem; }
+.lightbox-nav.next { right: 1rem; }
+
+
+  /* ── DELETE BTN ── */
+  .delete-btn {
+    display: none;
+    position: absolute;
+    top: 0.4rem; left: 0.4rem;
+    background: rgba(192,57,43,0.85);
+    border: none; color: white;
+    font-size: 0.7rem; padding: 0.25rem 0.45rem;
+    border-radius: 2px; cursor: pointer;
+    backdrop-filter: blur(4px);
+    z-index: 10; line-height: 1;
+    transition: background 0.2s;
+  }
+  .delete-btn:hover { background: rgba(192,57,43,1); }
+  body.admin-mode .media-item:hover .delete-btn { display: block; }
+
+  
+  /* ── ADMIN MEDIA MENU ── */
+  .media-actions {
+    display: none;
+    position: absolute;
+    top: 0.4rem; left: 0.4rem;
+    gap: 0.3rem;
+    z-index: 10;
+  }
+  body.admin-mode .media-item:hover .media-actions { display: flex; }
+
+  .media-action-btn {
+    background: rgba(10,14,10,0.8);
+    border: none; color: var(--dark);
+    font-size: 0.65rem; padding: 0.25rem 0.45rem;
+    border-radius: 2px; cursor: pointer;
+    backdrop-filter: blur(4px);
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .media-action-btn:hover { background: rgba(10,14,10,1); }
+  .media-action-btn.red:hover { background: rgba(192,57,43,0.9); }
+
+  /* ── MOVE YEAR POPUP ── */
+  #moveYearPopup {
+    position: fixed; inset: 0; z-index: 700;
+    display: flex; align-items: center; justify-content: center; padding: 2rem;
+    background: rgba(10,14,10,0.7); backdrop-filter: blur(6px);
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  }
+  #moveYearPopup.visible { opacity: 1; pointer-events: all; }
+  .move-card { background: var(--cream); border: 1px solid var(--sand); border-radius: 4px; max-width: 320px; width: 100%; padding: 2rem; text-align: center; }
+  .move-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 300; color: var(--dark); margin-bottom: 0.5rem; }
+  .move-card p { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.9rem; color: var(--muted); margin-bottom: 1.2rem; }
+  .move-select { width: 100%; font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; border: none; border-bottom: 1px solid var(--sand); background: none; color: var(--dark); text-align: center; padding: 0.3rem 0; outline: none; margin-bottom: 1.5rem; cursor: pointer; }
+  .move-actions { display: flex; gap: 0.75rem; justify-content: center; }
+
+  /* ── DRAG & DROP ── */
+  .media-item.dragging { opacity: 0.4; border: 2px dashed var(--green); }
+  .media-item.drag-over { border: 2px solid var(--green); transform: scale(1.03); }
+
+  
+  /* ── LETTER PAGE ── */
+  #page-letter {
+    min-height: 100vh;
+    background: var(--cream);
+    padding: 4rem 2rem 4rem;
+  }
+  #page-letter.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .letter-wrap {
+    max-width: 560px;
+    width: 100%;
+  }
+
+  .letter-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .letter-mc {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--green);
+    letter-spacing: 0.02em;
+  }
+
+  .letter-divider {
+    width: 40px;
+    height: 1px;
+    background: var(--sand);
+    margin: 1rem auto;
+  }
+
+  .letter-body {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--text);
+    line-height: 1.9;
+    margin-bottom: 2.5rem;
+  }
+
+  .letter-body p {
+    margin-bottom: 1.2rem;
+  }
+
+  .letter-body .salutation {
+    color: var(--dark);
+    font-size: 1.15rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .letter-body .signature {
+    margin-top: 2rem;
+    color: var(--dark);
+    font-size: 1.1rem;
+  }
+
+  .letter-body .riddle {
+    color: var(--green-light);
+    font-size: 1.05rem;
+    border-left: 2px solid var(--green);
+    padding-left: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  /* Audio player */
+  .letter-audio {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+    padding: 1rem 1.2rem;
+    background: var(--warm);
+    border-radius: 3px;
+    border: 1px solid var(--sand);
+  }
+
+  .audio-play-btn {
+    background: var(--green);
+    border: none;
+    color: var(--cream);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+  .audio-play-btn:hover { background: var(--green-light); }
+
+  .audio-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .audio-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--dark);
+  }
+
+  .audio-artist {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .audio-progress {
+    flex: 1;
+    height: 2px;
+    background: var(--sand);
+    border-radius: 1px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .audio-progress-fill {
+    height: 100%;
+    background: var(--green);
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+
+  /* Code input dans la lettre */
+  .letter-code-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--sand);
+    text-align: center;
+  }
+
+  .letter-code-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  .letter-code-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .letter-code-input {
+    width: 100%;
+    max-width: 260px;
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.3em;
+    border: none;
+    border-bottom: 1px solid var(--sand);
+    background: none;
+    color: var(--dark);
+    padding: 0.4rem 0;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .letter-code-input:focus { border-color: var(--green); }
+  .letter-code-input.error { border-color: #c0392b; animation: shake 0.35s ease; }
+
+  .letter-code-btn {
+    background: var(--green);
+    color: var(--cream);
+    border: none;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.65rem 2rem;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .letter-code-btn:hover { background: var(--green-light); }
+
+  .letter-code-error {
+    font-size: 0.75rem;
+    color: #c0392b;
+    opacity: 0;
+    transition: opacity 0.2s;
+    min-height: 1rem;
+  }
+  .letter-code-error.visible { opacity: 1; }
+
+  .letter-success {
+    display: none;
+    background: var(--warm);
+    border: 1px solid var(--green);
+    border-radius: 3px;
+    padding: 1.2rem 1.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--green-light);
+    line-height: 1.6;
+    text-align: center;
+    margin-top: 1rem;
+  }
+  .letter-success.visible { display: block; }
+
+  footer { text-align: center; padding: 3rem 2rem; border-top: 1px solid var(--warm); font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.9rem; color: var(--sand); }
+
+@media (max-width: 600px) {
+  .media-grid { grid-template-columns: repeat(2, 1fr); gap: 0.4rem; padding: 1rem; }
+  .year-page-top { padding: 1.5rem 1rem 1rem; }
+  .year-cards { padding: 0 1rem; }
+  .site-header { padding: 0 1rem; }
+  .hero { padding: 4rem 1rem 2rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- PASSWORD -->
+<div id="passwordScreen">
+  <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;color:#7aab7a;text-align:center;margin-bottom:1.2rem;">Pour que rien ne disparaisse vraiment.</p>
+  <h1 class="lock-title">M<em>&</em>C</h1>
+  <p class="lock-sub">Entre le mot de passe pour voyager dans le temps.</p>
+  <div class="lock-form">
+    <input class="lock-input" id="lockInput" type="password" placeholder="••••••" maxlength="30" onkeydown="if(event.key==='Enter') checkPassword()">
+    <div class="lock-error" id="lockError">Mot de passe incorrect.</div>
+    <button class="lock-btn" onclick="checkPassword()">Entrer</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="site-header" id="siteHeader" style="display:none;">
+  <div class="site-title" onclick="goHome()">M<span>&</span>C — <span>Toi, Moi, Nous</span></div>
+  <div class="header-actions">
+    <button class="btn-header" id="adminToggle" onclick="toggleAdmin()" style="display:none;">✦ Gérer</button>
+    <button class="btn-header" onclick="logout()">↩ Quitter</button>
+  </div>
+</header>
+
+<!-- WELCOME POPUP -->
+<div id="welcomePopup">
+  <div class="popup-card">
+    <button class="popup-close" onclick="closePopup()">✕</button>
+    <p class="popup-eyebrow">Hey</p>
+    <h2 class="popup-title"><em>M&C</em></h2>
+    <p class="popup-body">Tout sera là pour toi quand tu le voudras.</p>
+    <button class="popup-btn" onclick="closePopup()">Voir les photos</button>
+  </div>
+</div>
+
+<!-- YEAR PICKER -->
+<div id="yearPickerPopup">
+  <div class="year-picker-card">
+    <h3 class="year-picker-title">Année introuvable</h3>
+    <p class="year-picker-sub">Cette photo n'a pas de date dans ses métadonnées.<br>Dans quelle année veux-tu la placer ?</p>
+    <div class="year-picker-filename" id="yearPickerFilename"></div>
+    <select class="year-picker-select" id="yearPickerSelect"></select>
+    <div class="picker-actions">
+      <button class="btn-ghost" onclick="skipYearPicker()">Ignorer</button>
+      <button class="btn-primary" onclick="confirmYearPicker()">Ajouter</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- MOVE YEAR POPUP -->
+<div id="moveYearPopup">
+  <div class="move-card">
+    <h3>Déplacer vers…</h3>
+    <p>Choisir l'année de destination</p>
+    <select class="move-select" id="moveYearSelect"></select>
+    <div class="move-actions">
+      <button class="btn-ghost" onclick="closeMovePopup()">Annuler</button>
+      <button class="btn-primary" onclick="confirmMove()">Déplacer</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <button class="lightbox-nav prev" onclick="navigateLightbox(-1)">‹</button>
+  <img id="lightboxImg" class="lightbox-media" src="" alt="" style="display:none;">
+  <video id="lightboxVideo" class="lightbox-media" controls style="display:none;"></video>
+  <div id="lightboxCaption" class="lightbox-caption"></div>
+  <button class="lightbox-nav next" onclick="navigateLightbox(1)">›</button>
+</div>
+
+<!-- PAGE HOME -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <p class="hero-eyebrow">Notre archive officielle</p>
+    <h1 class="hero-title">M<em>&</em>C</h1>
+    <p class="hero-sub">Tout est là, intact.</p>
+  </div>
+  <div class="daily-section" id="dailySection" style="display:none;">
+    <p class="daily-label">✦ Photo du jour</p>
+    <div class="daily-frame" id="dailyFrame"><div class="daily-empty">Les photos apparaîtront ici.</div></div>
+  </div>
+  <div style="max-width:900px;margin:2rem auto 1rem;padding:0 2rem;text-align:center;">
+    <p class="section-label">✦ Parcourir par année</p>
+  </div>
+  <div class="year-cards" id="yearCards"></div>
+  <footer>Les photos sont là.</footer>
+</div>
+
+<!-- PAGE YEAR -->
+<div id="page-year" class="page">
+  <div class="import-bar">
+    <div class="import-bar-inner">
+      <span class="import-label">Import en masse</span>
+      <label class="import-btn">
+        <input type="file" accept="image/*,video/*" multiple onchange="importAllFiles(this)">
+        ✦ Importer des photos & vidéos
+      </label>
+    </div>
+    <div class="progress-wrap" id="importProgress">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-text" id="progressText"></div>
+    </div>
+  </div>
+  <div class="year-page-top">
+    <span class="year-page-title" id="yearPageTitle"></span>
+    <span class="year-page-count" id="yearPageCount"></span>
+    <div class="year-page-nav" id="yearPageNav"></div>
+  </div>
+  <div class="media-grid" id="mediaGrid"></div>
+  <div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
+    <button class="load-more-btn" onclick="loadMore()">Voir plus</button>
+  </div>
+  <label class="add-media-btn">
+    <input type="file" accept="image/*,video/*" multiple onchange="addMediaToYear(currentYear, this)">
+    + Ajouter des photos / vidéos
+  </label>
+</div>
+
+
+<!-- PAGE LETTRE -->
+<div id="page-letter" class="page">
+  <div class="letter-wrap">
+
+    <div class="letter-header">
+      <div class="letter-mc">M&C</div>
+      <div class="letter-divider"></div>
+    </div>
+
+    <!-- Audio -->
+    <div class="letter-audio">
+      <button class="audio-play-btn" id="audioPlayBtn" onclick="toggleAudio()">▶</button>
+
+      <div class="audio-progress" id="audioProgress" onclick="seekAudio(event)">
+        <div class="audio-progress-fill" id="audioFill"></div>
+      </div>
+    </div>
+    <audio id="letterAudio" src="https://res.cloudinary.com/dayi1mq7p/video/upload/v1778674351/MC_Archive_xp1jm5.m4a" loop preload="auto"></audio>
+
+    <!-- Corps de la lettre -->
+    <div class="letter-body">
+      <p class="salutation">Chère Maÿlis,</p>
+      <p>Premièrement je tiens à te féliciter, car si tu lis ce message, c'est que tu as réussi à en déchiffrer le code. Je savais que tu y arriverais&nbsp;!</p>
+      <p>Tu sais, on a vécu beaucoup de choses ensemble. On a connu énormément de hauts et de bas, parfois des moments très compliqués, et je sais que ça n'a pas toujours été facile, ni pour toi, ni pour moi.</p>
+      <p>Mais malgré tout ça, ce qu'on a vécu était réel. Quasiment 3 ans de notre vie, ça ne s'efface pas comme si ça n'avait jamais existé. Même si on s'est disputés, même si certaines choses ont été dites ou faites, je ne voulais pas que notre histoire se perde complètement.</p>
+      <p>Quand tu m'as dit que tu avais supprimé nos photos, ça m'a marqué. Alors j'ai voulu créer un endroit où tous ces souvenirs existent encore pour que tu puisses toujours y avoir accès si un jour tu en ressens l'envie.</p>
+      <p>J'aimerais surtout que tu te rappelles des bonnes choses. Des moments sincères, des fous rires, des voyages, des habitudes qu'on avait, de tout ce qu'on a construit ensemble.</p>
+      <p>Et je veux aussi que tu saches que je tiens réellement de changer certaines choses chez moi. Pas seulement pour toi, mais aussi pour moi-même. Je sais que tu peux douter que j'en sois capable, et honnêtement je comprends pourquoi. Mais malgré ça, j'ai réellment la volonté de devnir une meilleure personne.</p>
+      <p>Peu importe ce qu'il arrive ensuite entre nous, notre histoire a existé, et elle comptera toujours pour moi.</p>
+      <p>Et maintenant… il te reste encore un dernier mystère à résoudre.</p>
+      <p>Trouve le deuxième code, et tu pourras accéder à toutes les photos.</p>
+      <p>Comme ça, même si elles ne sont plus dans ton téléphone, notre histoire, elle, ne sera jamais vraiment perdue.</p>
+      <p class="riddle">Alors, tu te souviens de l'endroit où on était pour notre première année et du code postal&nbsp;?</p>
+      <p class="signature">Crys</p>
+    </div>
+
+    <!-- Input code -->
+    <div class="letter-code-section">
+      <p class="letter-code-label">Entre le code pour accéder à l'album…</p>
+      <div class="letter-code-form">
+        <input class="letter-code-input" id="letterCodeInput" type="password" placeholder="••••••" maxlength="30" onkeydown="if(event.key==='Enter') checkLetterCode()">
+        <div class="letter-code-error" id="letterCodeError">Code incorrect. Réessaie.</div>
+        <button class="letter-code-btn" onclick="checkLetterCode()">Accéder</button>
+      </div>
+      <div class="letter-success" id="letterSuccess">
+        ✓ Tu y es&nbsp;! La prochaine fois, tu peux entrer directement ce code sur la page d'accueil — plus besoin de passer par la lettre.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<script>
+
+// ─── LETTRE ──────────────────────────────────────────────────────
+function showLetter() {
+  document.getElementById('passwordScreen').classList.add('hidden');
+  setTimeout(() => document.getElementById('passwordScreen').style.display='none', 500);
+  showPage('page-letter');
+  // Lancer la musique automatiquement
+  setTimeout(() => {
+    const audio = document.getElementById('letterAudio');
+    const btn = document.getElementById('audioPlayBtn');
+    audio.play().then(() => { btn.textContent = '❚❚'; }).catch(() => {});
+  }, 600);
+}
+
+function checkLetterCode() {
+  const input = document.getElementById('letterCodeInput');
+  const val = input.value;
+  if (val === PASS_GUEST) {
+    sessionStorage.setItem('mc_auth', 'guest');
+    document.getElementById('letterSuccess').classList.add('visible');
+    document.getElementById('letterCodeInput').style.display = 'none';
+    document.querySelector('.letter-code-btn').style.display = 'none';
+    // Après 3 secondes, ouvrir l'album
+    setTimeout(() => {
+      // Couper la musique
+      const audio = document.getElementById('letterAudio');
+      audio.pause();
+      audio.currentTime = 0;
+      // Cacher la page lettre
+      document.getElementById('page-letter').style.display = 'none';
+      document.getElementById('page-letter').classList.remove('active');
+      // Afficher le header
+      document.getElementById('siteHeader').style.display = 'flex';
+      // Remettre toutes les pages en display none sauf home
+      showPage('page-home');
+      loadData();
+    }, 3000);
+  } else {
+    input.classList.add('error');
+    document.getElementById('letterCodeError').classList.add('visible');
+    input.value = '';
+    setTimeout(() => input.classList.remove('error'), 400);
+  }
+}
+
+// ─── AUDIO ───────────────────────────────────────────────────────
+function toggleAudio() {
+  const audio = document.getElementById('letterAudio');
+  const btn = document.getElementById('audioPlayBtn');
+  if (audio.paused) { audio.play(); btn.textContent = '❚❚'; }
+  else { audio.pause(); btn.textContent = '▶'; }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const audio = document.getElementById('letterAudio');
+  const fill = document.getElementById('audioFill');
+  audio.addEventListener('timeupdate', () => {
+    if (audio.duration) fill.style.width = (audio.currentTime / audio.duration * 100) + '%';
+  });
+});
+
+function seekAudio(e) {
+  const audio = document.getElementById('letterAudio');
+  const bar = document.getElementById('audioProgress');
+  const pct = e.offsetX / bar.offsetWidth;
+  audio.currentTime = pct * audio.duration;
+}
+
+// ─── CONFIG ──────────────────────────────────────────────────────
+const CLD_CLOUD = "dayi1mq7p";
+const CLD_PRESET = "mc-archive";
+const CLD_BASE = `https://api.cloudinary.com/v1_1/${CLD_CLOUD}`;
+const JSONBIN_ID = "6a013aaec0954111d805bf21";
+const JSONBIN_KEY = "$2a$10$4Hz/UUK6RZsvPvHvLOfre..2w/um9CLvVlTxkD/DMATQltcgbIq1y";
+const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
+
+// ─── MANIFEST ────────────────────────────────────────────────────
+async function loadManifest() {
+  try {
+    const res = await fetch(`${JSONBIN_URL}/latest`, { headers: { 'X-Master-Key': JSONBIN_KEY } });
+    if (!res.ok) return {};
+    return (await res.json()).record || {};
+  } catch(e) { return {}; }
+}
+
+async function saveManifest(data) {
+  try { localStorage.setItem('mc_cache', JSON.stringify(data)); } catch(e) {}
+  try {
+    await fetch(JSONBIN_URL, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
+      body: JSON.stringify(data)
+    });
+  } catch(e) { console.error('Save error', e); }
+}
+
+// ─── DATA ────────────────────────────────────────────────────────
+let albumData = {};
+let currentYear = null;
+let currentPageItems = [];
+let currentPageIndex = 0;
+const PAGE_SIZE = 30;
+let isAdmin = false;
+
+async function loadData() {
+  try {
+    const cache = localStorage.getItem('mc_cache');
+    if (cache) { albumData = JSON.parse(cache); renderHome(); }
+  } catch(e) {}
+  const manifest = await loadManifest();
+  const valid = manifest && Object.keys(manifest).length && Object.values(manifest).every(v => v && Array.isArray(v.medias));
+  if (valid) { albumData = manifest; }
+  else { albumData = { "2023":{medias:[]},"2024":{medias:[]},"2025":{medias:[]},"2026":{medias:[]} }; await saveManifest(albumData); }
+  renderHome();
+}
+
+async function saveData() {
+  try { localStorage.setItem('mc_cache', JSON.stringify(albumData)); } catch(e) {}
+  await saveManifest(albumData);
+}
+
+// ─── NAVIGATION ──────────────────────────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => {
+    p.classList.remove('active');
+    p.style.removeProperty('display');
+  });
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function goHome() { showPage('page-home'); renderHome(); }
+
+function goToYear(year) {
+  currentYear = year;
+  currentPageIndex = 0;
+  currentPageItems = (albumData[year]?.medias || []).filter(m => m !== null);
+  showPage('page-year');
+  renderYearPage();
+}
+
+// ─── HOME ────────────────────────────────────────────────────────
+function renderHome() { renderDailyPhoto(); renderYearCards(); }
+
+function renderYearCards() {
+  const container = document.getElementById('yearCards');
+  container.innerHTML = '';
+  Object.keys(albumData).sort().forEach(year => {
+    const medias = (albumData[year]?.medias || []).filter(m => m !== null);
+    const images = medias.filter(m => m && m.type === 'image');
+    const dayIdx = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
+    const cover = images.length ? images[dayIdx % images.length] : null;
+    const card = document.createElement('div');
+    card.className = 'year-card';
+    card.onclick = () => goToYear(year);
+    if (cover) {
+      card.innerHTML = `<img src="${cover.thumb || cover.src}" alt="${year}"><div class="year-card-overlay"><div class="year-card-label">${year}</div><div class="year-card-count">${medias.length} souvenir${medias.length>1?'s':''}</div></div>`;
+    } else {
+      card.innerHTML = `<div class="year-card-overlay" style="background:rgba(10,14,10,0.5);position:absolute;inset:0;"><div class="year-card-label">${year}</div><div class="year-card-count">0 souvenir</div></div>`;
+    }
+    container.appendChild(card);
+  });
+}
+
+function renderDailyPhoto() {
+  const allPhotos = [];
+  Object.keys(albumData).sort().forEach(y => (albumData[y]?.medias||[]).forEach(m => { if(m&&m.type==='image') allPhotos.push(m); }));
+  const section = document.getElementById('dailySection');
+  const frame = document.getElementById('dailyFrame');
+  if (!allPhotos.length) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  const photo = allPhotos[Math.floor(Date.now()/(1000*60*60*24)) % allPhotos.length];
+  let dateStr = '';
+  if (photo.exifDate) dateStr = new Date(photo.exifDate).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+  else if (photo.date) dateStr = photo.date;
+  frame.innerHTML = `<img src="${photo.thumb||photo.src}" alt=""><div class="daily-overlay"><span class="daily-caption-text">${photo.caption||''}</span>${dateStr?`<span class="daily-date">${dateStr}</span>`:''}</div>`;
+}
+
+// ─── YEAR PAGE ───────────────────────────────────────────────────
+function renderYearPage() {
+  const year = currentYear;
+  const years = Object.keys(albumData).sort();
+  const yi = years.indexOf(year);
+  document.getElementById('yearPageTitle').textContent = year;
+  document.getElementById('yearPageCount').textContent = `${currentPageItems.length} souvenir${currentPageItems.length>1?'s':''}`;
+  const nav = document.getElementById('yearPageNav');
+  nav.innerHTML = '';
+  if (yi > 0) { const b = document.createElement('button'); b.className='year-nav-btn'; b.textContent='← '+years[yi-1]; b.onclick=()=>goToYear(years[yi-1]); nav.appendChild(b); }
+  if (yi < years.length-1) { const b = document.createElement('button'); b.className='year-nav-btn'; b.textContent=years[yi+1]+' →'; b.onclick=()=>goToYear(years[yi+1]); nav.appendChild(b); }
+  renderGridPage(true);
+}
+
+function renderGridPage(reset=false) {
+  const grid = document.getElementById('mediaGrid');
+  if (reset) { grid.innerHTML=''; currentPageIndex=0; }
+  const shapes = ['','square','tall','','','square'];
+  const items = currentPageItems.slice(currentPageIndex, currentPageIndex+PAGE_SIZE);
+  items.forEach((media, i) => {
+    const idx = currentPageIndex + i;
+    const item = document.createElement('div');
+    item.className = 'media-item ' + shapes[idx % shapes.length];
+    let thumb = media.thumb;
+    if (!thumb && media.type==='video') {
+      if (media.publicId) thumb = `https://res.cloudinary.com/${CLD_CLOUD}/video/upload/q_auto,f_jpg,w_500,so_0/${media.publicId}.jpg`;
+      else if (media.src) { const m=media.src.match(/\/upload\/(?:[^\/]+\/)?(.+?)(?:\.[^.]+)?$/); if(m) thumb=`https://res.cloudinary.com/${CLD_CLOUD}/video/upload/q_auto,f_jpg,w_500,so_0/${m[1]}.jpg`; }
+    }
+    if (!thumb) thumb = media.src;
+    item.innerHTML = `
+      <div class="media-actions">
+        <button class="media-action-btn" onclick="openMovePopup(event,${idx})">↗ Année</button>
+        <button class="media-action-btn red" onclick="deleteMedia(event,${idx})">✕</button>
+      </div>
+      <img src="${thumb}" alt="${media.caption||''}">
+      ${media.type==='video'?'<span class="video-badge">▶</span>':''}
+      <div class="caption"><div class="caption-text">${media.caption||''}</div></div>
+    `;
+    item.addEventListener('click', () => openLightbox(idx));
+
+    // Drag & drop
+    item.draggable = true;
+    item.dataset.idx = idx;
+    item.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', idx);
+      setTimeout(() => item.classList.add('dragging'), 0);
+    });
+    item.addEventListener('dragend', () => item.classList.remove('dragging'));
+    item.addEventListener('dragover', e => { e.preventDefault(); item.classList.add('drag-over'); });
+    item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+    item.addEventListener('drop', e => {
+      e.preventDefault(); e.stopPropagation();
+      item.classList.remove('drag-over');
+      const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
+      const toIdx = idx;
+      if (fromIdx === toIdx) return;
+      const medias = albumData[currentYear].medias;
+      const [moved] = medias.splice(fromIdx, 1);
+      medias.splice(toIdx, 0, moved);
+      currentPageItems = medias.filter(m => m !== null);
+      saveData();
+      renderGridPage(true);
+    });
+    grid.appendChild(item);
+  });
+  currentPageIndex += items.length;
+  document.getElementById('loadMoreWrap').style.display = currentPageIndex < currentPageItems.length ? 'block' : 'none';
+}
+
+function loadMore() { renderGridPage(false); }
+
+// ─── LIGHTBOX ────────────────────────────────────────────────────
+let lbCurrent = 0;
+
+function openLightbox(idx) {
+  lbCurrent = idx; showLightboxItem();
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function showLightboxItem() {
+  const item = currentPageItems[lbCurrent];
+  if (!item) return;
+  const img = document.getElementById('lightboxImg'), vid = document.getElementById('lightboxVideo');
+  if (item.type==='video') { img.style.display='none'; vid.style.display='block'; vid.src=item.src; }
+  else { vid.style.display='none'; vid.src=''; img.style.display='block'; img.src=item.src; }
+  document.getElementById('lightboxCaption').textContent = item.caption||'';
+}
+
+function closeLightbox(e) {
+  if (e && e.target!==document.getElementById('lightbox') && !e.target.classList.contains('lightbox-close')) return;
+  document.getElementById('lightbox').classList.remove('open');
+  document.getElementById('lightboxVideo').src='';
+  document.body.style.overflow='';
+}
+
+function navigateLightbox(dir) {
+  lbCurrent = (lbCurrent+dir+currentPageItems.length)%currentPageItems.length;
+  showLightboxItem();
+}
+
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key==='ArrowLeft') navigateLightbox(-1);
+  if (e.key==='ArrowRight') navigateLightbox(1);
+  if (e.key==='Escape') closeLightbox();
+});
+
+// ─── AUTH ────────────────────────────────────────────────────────
+const PASS_GUEST = "limonaia78120";
+const PASS_ADMIN = "Big38G0NH4WK3M+";
+
+const PASS_LETTER = "elephantvert";
+
+function checkPassword() {
+  const input = document.getElementById('lockInput');
+  const val = input.value;
+  if (val===PASS_ADMIN) { sessionStorage.setItem('mc_auth','admin'); unlockSite(true); }
+  else if (val===PASS_GUEST) { sessionStorage.setItem('mc_auth','guest'); unlockSite(false); }
+  else if (val===PASS_LETTER) { sessionStorage.setItem('mc_auth','letter'); showLetter(); }
+  else {
+    input.classList.add('error');
+    document.getElementById('lockError').classList.add('visible');
+    input.value='';
+    setTimeout(()=>input.classList.remove('error'),400);
+  }
+}
+
+function unlockSite(asAdmin) {
+  document.getElementById('passwordScreen').classList.add('hidden');
+  setTimeout(()=>document.getElementById('passwordScreen').style.display='none',500);
+  document.getElementById('siteHeader').style.display='flex';
+  if (asAdmin) {
+    isAdmin=true; document.body.classList.add('admin-mode');
+    const t=document.getElementById('adminToggle'); t.style.display='inline-block'; t.textContent='✦ Terminer';
+  }
+  showPopup(); loadData();
+}
+
+const sa = sessionStorage.getItem('mc_auth');
+if (sa==='letter') {
+  document.getElementById('passwordScreen').style.display='none';
+  showLetter();
+} else if (sa==='admin') {
+  document.getElementById('passwordScreen').style.display='none';
+  document.getElementById('siteHeader').style.display='flex';
+  isAdmin=true; document.body.classList.add('admin-mode');
+  const t=document.getElementById('adminToggle'); t.style.display='inline-block'; t.textContent='✦ Terminer';
+  loadData();
+} else if (sa==='guest') {
+  document.getElementById('passwordScreen').style.display='none';
+  document.getElementById('siteHeader').style.display='flex';
+  loadData();
+}
+
+function toggleAdmin() {
+  isAdmin=!isAdmin; document.body.classList.toggle('admin-mode',isAdmin);
+  document.getElementById('adminToggle').textContent=isAdmin?'✦ Terminer':'✦ Gérer';
+}
+
+function logout() { sessionStorage.clear(); location.reload(); }
+
+// ─── POPUP ───────────────────────────────────────────────────────
+function showPopup() {
+  if (sessionStorage.getItem('mc_welcomed')) return;
+  setTimeout(()=>document.getElementById('welcomePopup').classList.add('visible'),800);
+}
+function closePopup() {
+  document.getElementById('welcomePopup').classList.remove('visible');
+  sessionStorage.setItem('mc_welcomed','1');
+}
+document.getElementById('welcomePopup').addEventListener('click',e=>{ if(e.target===document.getElementById('welcomePopup')) closePopup(); });
+
+// ─── COMPRESSION ─────────────────────────────────────────────────
+function compressImage(file, maxWidth=1920, quality=0.82) {
+  return new Promise(resolve=>{
+    if (file.type.startsWith('video')) { resolve(file); return; }
+    const img=new Image(), url=URL.createObjectURL(file);
+    img.onload=()=>{
+      URL.revokeObjectURL(url);
+      if (img.width<=maxWidth) { resolve(file); return; }
+      const canvas=document.createElement('canvas');
+      canvas.width=maxWidth; canvas.height=Math.round(img.height*(maxWidth/img.width));
+      canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+      canvas.toBlob(blob=>resolve(new File([blob],file.name,{type:'image/jpeg'})),'image/jpeg',quality);
+    };
+    img.src=url;
+  });
+}
+
+// ─── EXIF ────────────────────────────────────────────────────────
+async function readExifDate(file) {
+  try {
+    if (typeof exifr==='undefined') return null;
+    const data=await exifr.parse(file,['DateTimeOriginal','DateTime']);
+    return data?.DateTimeOriginal||data?.DateTime||null;
+  } catch(e) { return null; }
+}
+
+// ─── UPLOAD ──────────────────────────────────────────────────────
+async function uploadToCloudinary(file) {
+  const isVideo=file.type.startsWith('video');
+  const fd=new FormData();
+  fd.append('file', isVideo?file:await compressImage(file));
+  fd.append('upload_preset',CLD_PRESET);
+  return new Promise((resolve,reject)=>{
+    const xhr=new XMLHttpRequest();
+    xhr.open('POST',`${CLD_BASE}/${isVideo?'video':'image'}/upload`);
+    xhr.onload=()=>{
+      try {
+        const r=JSON.parse(xhr.responseText);
+        if (r.public_id) {
+          if (isVideo) r.thumb_url=`https://res.cloudinary.com/${CLD_CLOUD}/video/upload/q_auto,f_jpg,w_500,so_0/${r.public_id}.jpg`;
+          else { r.secure_url=r.secure_url.replace('/upload/','/upload/q_auto,f_auto,w_1920/'); r.thumb_url=r.secure_url.replace('w_1920','w_500'); }
+        }
+        resolve(r);
+      } catch(e){reject(e);}
+    };
+    xhr.onerror=reject;
+    xhr.send(fd);
+  });
+}
+
+function makeMediaObj(result, type, year, exifDate) {
+  return { src:result.secure_url, thumb:result.thumb_url||result.secure_url, publicId:result.public_id, type, caption:'', date:year, exifDate:exifDate?exifDate.toISOString():null };
+}
+
+// ─── IMPORT ──────────────────────────────────────────────────────
+let importQueue=[];
+
+async function importAllFiles(input) {
+  const files=Array.from(input.files);
+  if (!files.length) return;
+  const prog=document.getElementById('importProgress'), fill=document.getElementById('progressFill'), text=document.getElementById('progressText');
+  prog.classList.add('visible');
+  let done=0; const withExif=[], withoutExif=[];
+  for (let i=0;i<files.length;i+=3) {
+    await Promise.all(files.slice(i,i+3).map(async file=>{
+      const isVideo=file.type.startsWith('video');
+      const exifDate=isVideo?null:await readExifDate(file);
+      try {
+        const r=await uploadToCloudinary(file);
+        const item={src:r.secure_url,thumb:r.thumb_url||r.secure_url,publicId:r.public_id,exifDate,type:isVideo?'video':'image',file};
+        if(exifDate) withExif.push(item); else withoutExif.push(item);
+      } catch(e){console.error(file.name,e);}
+      done++; fill.style.width=Math.round(done/files.length*100)+'%'; text.textContent=`${done}/${files.length} uploadés…`;
+    }));
+  }
+  for (const r of withExif) {
+    const year=String(r.exifDate.getFullYear());
+    if (!albumData[year]) albumData[year]={medias:[]};
+    albumData[year].medias.push(makeMediaObj({secure_url:r.src,thumb_url:r.thumb,public_id:r.publicId},r.type,year,r.exifDate));
+  }
+  sortAll(); await saveData(); renderHome();
+  if(currentYear){currentPageItems=(albumData[currentYear]?.medias||[]).filter(m=>m!==null);renderGridPage(true);}
+  text.textContent=`✓ ${withExif.length} placée${withExif.length>1?'s':''} auto.${withoutExif.length?` ${withoutExif.length} sans date.`:''}`;
+  if(withoutExif.length){importQueue=withoutExif;processImportQueue();}
+  else setTimeout(()=>prog.classList.remove('visible'),3000);
+  input.value='';
+}
+
+async function addMediaToYear(year, input) {
+  const files=Array.from(input.files);
+  if(!files.length||!year) return;
+  if(!albumData[year]) albumData[year]={medias:[]};
+  for (const file of files) {
+    const isVideo=file.type.startsWith('video');
+    const exifDate=isVideo?null:await readExifDate(file);
+    try { const r=await uploadToCloudinary(file); albumData[year].medias.push(makeMediaObj(r,isVideo?'video':'image',year,exifDate)); }
+    catch(e){console.error(file.name,e);}
+  }
+  await saveData();
+  currentPageItems=(albumData[year]?.medias||[]).filter(m=>m!==null);
+  renderGridPage(true); renderHome();
+}
+
+// ─── MOVE YEAR ───────────────────────────────────────────────────
+let moveIdx = null;
+
+function openMovePopup(e, idx) {
+  e.stopPropagation();
+  moveIdx = idx;
+  const sel = document.getElementById('moveYearSelect');
+  sel.innerHTML = Object.keys(albumData).sort()
+    .filter(y => y !== currentYear)
+    .map(y => `<option value="${y}">${y}</option>`).join('');
+  document.getElementById('moveYearPopup').classList.add('visible');
+}
+
+function closeMovePopup() {
+  document.getElementById('moveYearPopup').classList.remove('visible');
+  moveIdx = null;
+}
+
+async function confirmMove() {
+  if (moveIdx === null) return;
+  const destYear = document.getElementById('moveYearSelect').value;
+  const media = albumData[currentYear].medias[moveIdx];
+  if (!media) return;
+
+  // Retirer de l'année actuelle
+  albumData[currentYear].medias.splice(moveIdx, 1);
+  // Ajouter dans l'année destination
+  if (!albumData[destYear]) albumData[destYear] = { medias: [] };
+  albumData[destYear].medias.push({ ...media, date: destYear });
+
+  currentPageItems = albumData[currentYear].medias.filter(m => m !== null);
+  closeMovePopup();
+  await saveData();
+  renderGridPage(true);
+  renderHome();
+}
+
+document.getElementById('moveYearPopup').addEventListener('click', e => {
+  if (e.target === document.getElementById('moveYearPopup')) closeMovePopup();
+});
+
+// ─── DELETE ──────────────────────────────────────────────────────
+async function deleteMedia(e, idx) {
+  e.stopPropagation();
+  if (!confirm('Supprimer ce média ?')) return;
+  albumData[currentYear].medias.splice(idx, 1);
+  currentPageItems = albumData[currentYear].medias.filter(m => m !== null);
+  await saveData();
+  renderGridPage(true);
+  renderHome();
+}
+
+// ─── TRI ─────────────────────────────────────────────────────────
+function sortAll() {
+  Object.keys(albumData).forEach(y=>{
+    if(!albumData[y]||!Array.isArray(albumData[y].medias)){albumData[y]={medias:[]};return;}
+    albumData[y].medias=albumData[y].medias.filter(m=>m!==null).sort((a,b)=>{
+      if(a.exifDate&&b.exifDate) return new Date(a.exifDate)-new Date(b.exifDate);
+      return a.exifDate?-1:b.exifDate?1:0;
+    });
+  });
+}
+
+// ─── YEAR PICKER ─────────────────────────────────────────────────
+let currentPickerItem=null;
+
+function processImportQueue() {
+  if(!importQueue.length){
+    document.getElementById('yearPickerPopup').classList.remove('visible');
+    saveData(); renderHome();
+    if(currentYear){currentPageItems=(albumData[currentYear]?.medias||[]).filter(m=>m!==null);renderGridPage(true);}
+    setTimeout(()=>document.getElementById('importProgress').classList.remove('visible'),2000);
+    return;
+  }
+  currentPickerItem=importQueue.shift();
+  const sel=document.getElementById('yearPickerSelect');
+  sel.innerHTML=Object.keys(albumData).sort().map(y=>`<option value="${y}">${y}</option>`).join('');
+  document.getElementById('yearPickerFilename').textContent=currentPickerItem.file.name;
+  document.getElementById('yearPickerPopup').classList.add('visible');
+}
+
+async function confirmYearPicker() {
+  if(!currentPickerItem) return;
+  const year=document.getElementById('yearPickerSelect').value;
+  if(!albumData[year]) albumData[year]={medias:[]};
+  albumData[year].medias.push({src:currentPickerItem.src,thumb:currentPickerItem.thumb||currentPickerItem.src,publicId:currentPickerItem.publicId,type:currentPickerItem.type,caption:'',date:year,exifDate:null});
+  sortAll();
+  document.getElementById('yearPickerPopup').classList.remove('visible');
+  setTimeout(processImportQueue,300);
+}
+
+function skipYearPicker() {
+  document.getElementById('yearPickerPopup').classList.remove('visible');
+  setTimeout(processImportQueue,300);
+}
+</script>
+</body>
+</html>
