@@ -816,6 +816,7 @@ body.admin-mode .add-media-btn { display: inline-flex; }
 
       <!-- Étape B : question + texte -->
       <div id="journalStepB" style="display:none;">
+        <button onclick="backToMoodChoice()" style="background:none;border:none;color:var(--muted);font-family:'Jost',sans-serif;font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;margin-bottom:1.5rem;padding:0;">← Changer ma réponse</button>
         <div class="journal-followup" id="journalFollowup"></div>
         <textarea class="journal-textarea" id="journalText" placeholder="Écris ce que tu veux ici…" rows="5"></textarea>
         <p class="journal-followup-q" style="margin-top:1.5rem;margin-bottom:0.75rem;">Une phrase à retenir pour demain ? <span style="color:var(--muted);font-size:0.85rem;">(facultatif)</span></p>
@@ -965,11 +966,25 @@ function setMoodBinary(isGood) {
   document.getElementById('journalStepB').style.display = 'block';
   const followup = document.getElementById('journalFollowup');
   if (isGood) {
-    followup.innerHTML = `<p class="journal-followup-q">Super ✨ Qu'est-ce qui te rend heureuse aujourd'hui ? Qu'est-ce que tu as réalisé ?</p>`;
+    followup.innerHTML = `<p class="journal-followup-q">Super ✨ Qu’est-ce qui te rend heureuse aujourd’hui ? Qu’est-ce que tu as réalisé ?</p>`;
   } else {
-    followup.innerHTML = `<p class="journal-followup-q">Qu'est-ce que tu aurais aimé faire aujourd'hui ? Pose-le ici.</p>`;
+    followup.innerHTML = `<p class="journal-followup-q">Qu’est-ce que tu aurais aimé faire aujourd’hui ? Pose-le ici.</p>`;
   }
-  setTimeout(() => document.getElementById('journalText').focus(), 100);
+  setTimeout(() => document.getElementById('journalText').focus(), 150);
+}
+
+function backToStepA() {
+  moodIsGood = null;
+  document.getElementById('journalStepA').style.display = 'block';
+  document.getElementById('journalStepB').style.display = 'none';
+}
+
+function backToMoodChoice() {
+  moodIsGood = null;
+  document.getElementById('journalStepB').style.display = 'none';
+  document.getElementById('journalStepA').style.display = 'block';
+  document.getElementById('journalText').value = '';
+  document.getElementById('journalTomorrow').value = '';
 }
 
 async function submitJournal() {
