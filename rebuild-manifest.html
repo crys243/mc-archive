@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Rebuild Manifest — M&C</title>
+<style>
+  body { font-family: monospace; background: #111; color: #7aab7a; padding: 2rem; line-height: 1.6; }
+  h1 { color: #e8ede8; margin-bottom: 0.5rem; font-size: 1.2rem; }
+  p { color: #6a876a; font-size: 0.85rem; margin-bottom: 1.5rem; }
+  button { background: #7aab7a; color: #111; border: none; padding: 0.75rem 2rem; font-size: 1rem; cursor: pointer; border-radius: 2px; margin-bottom: 1.5rem; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  #log { white-space: pre-wrap; font-size: 0.85rem; }
+  .ok { color: #7aab7a; } .err { color: #e74c3c; } .info { color: #c8d4c8; } .done { color: #f1c40f; font-weight: bold; }
+</style>
+</head>
+<body>
+<h1>🔧 Reconstruction du manifest — M&C</h1>
+<p>Récupère toutes les ressources depuis Cloudinary et reconstruit le JSONBin.</p>
+<button id="runBtn" onclick="run()">Lancer la reconstruction</button>
+<div id="log"></div>
+<script>
+const CLD_CLOUD   = "dayi1mq7p";
+const CLD_KEY     = "559222631481197";
+const CLD_SECRET  = "NdX3PCCF4k05y-5N-bVPyvssMOk";
+const JSONBIN_ID  = "6a013aaec0954111d805bf21";
+const JSONBIN_KEY = "$2a$10$4Hz/UUK6RZsvPvHvLOfre..2w/um9CLvVlTxkD/DMATQltcgbIq1y";
+const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
+const AUTH = 'Basic ' + btoa(`${CLD_KEY}:${CLD_SECRET}`);
+
+function log(msg, cls='info') {
+  document.getElementById('log').innerHTML += `<span class="${cls}">${msg}</span>\n`;
+}
+
+async function fetchResources(type, cursor = null) {
+  let url = `https://api.cloudinary.com/v1_1/${CLD_CLOUD}/resources/${type}?max_results=500&type=upload`;
+  if (cursor) url += `&next_cursor=${cursor}`;
+  const res = await fetch(url, { headers: { 'Authorization': AUTH } });
+  if (!res.ok) throw new Error(`${type} fetch failed: ${res.status}`);
+  return await res.json();
+}
+
+function getYear(resource) {
+  // Essayer d'extraire l'année depuis la date de création Cloudinary
+  if (resource.created_at) {
+    const year = new Date(resource.created_at).getFullYear();
+    if (year >= 2020 && year <= 2026) return String(year);
+  }
+  return null;
+}
+
+function buildThumb(resource, type) {
+  const pid = resource.public_id;
+  if (type === 'video') {
+    return `https://res.cloudinary.com/${CLD_CLOUD}/video/upload/q_auto,f_jpg,w_500,so_0/${pid}.jpg`;
+  }
+  return `https://res.cloudinary.com/${CLD_CLOUD}/image/upload/q_auto,f_auto,w_500/${pid}`;
+}
+
+function buildSrc(resource, type) {
+  const pid = resource.public_id;
+  if (type === 'video') {
+    return resource.secure_url;
+  }
+  return `https://res.cloudinary.com/${CLD_CLOUD}/image/upload/q_auto,f_auto,w_1920/${pid}`;
+}
+
+async function run() {
+  document.getElementById('runBtn').disabled = true;
+  log('=== Reconstruction du manifest ===\n', 'done');
+
+  // 1. Récupérer toutes les images
+  log('1. Récupération des images Cloudinary...');
+  let images = [], cursor = null;
+  do {
+    try {
+      const data = await fetchResources('image', cursor);
+      images = images.concat(data.resources || []);
+      cursor = data.next_cursor || null;
+      log(`   → ${images.length} images...`);
+    } catch(e) { log('   Erreur: ' + e.message, 'err'); cursor = null; }
+  } while (cursor);
+  log(`   ✓ ${images.length} images trouvées`, 'ok');
+
+  // 2. Récupérer toutes les vidéos
+  log('\n2. Récupération des vidéos Cloudinary...');
+  let videos = []; cursor = null;
+  do {
+    try {
+      const data = await fetchResources('video', cursor);
+      videos = videos.concat(data.resources || []);
+      cursor = data.next_cursor || null;
+      log(`   → ${videos.length} vidéos...`);
+    } catch(e) { log('   Erreur: ' + e.message, 'err'); cursor = null; }
+  } while (cursor);
+  log(`   ✓ ${videos.length} vidéos trouvées`, 'ok');
+
+  // 3. Construire le manifest par année
+  log('\n3. Construction du manifest par année...');
+  const albumData = {
+    "2023": { medias: [] },
+    "2024": { medias: [] },
+    "2025": { medias: [] },
+    "2026": { medias: [] }
+  };
+
+  // Exclure le fichier audio et le manifest JSON
+  const excludeIds = ['MC_Archive_xp1jm5', 'mc_archive_manifest'];
+
+  let placed = 0, skipped = 0;
+
+  for (const img of images) {
+    if (excludeIds.some(e => img.public_id.includes(e))) { skipped++; continue; }
+    const year = getYear(img);
+    if (!year) { skipped++; continue; }
+    if (!albumData[year]) albumData[year] = { medias: [] };
+    albumData[year].medias.push({
+      src: buildSrc(img, 'image'),
+      thumb: buildThumb(img, 'image'),
+      publicId: img.public_id,
+      type: 'image',
+      caption: '',
+      date: year,
+      exifDate: img.created_at || null
+    });
+    placed++;
+  }
+
+  for (const vid of videos) {
+    if (excludeIds.some(e => vid.public_id.includes(e))) { skipped++; continue; }
+    const year = getYear(vid);
+    if (!year) { skipped++; continue; }
+    if (!albumData[year]) albumData[year] = { medias: [] };
+    albumData[year].medias.push({
+      src: vid.secure_url,
+      thumb: buildThumb(vid, 'video'),
+      publicId: vid.public_id,
+      type: 'video',
+      caption: '',
+      date: year,
+      exifDate: vid.created_at || null
+    });
+    placed++;
+  }
+
+  // Trier chaque année par date
+  Object.keys(albumData).forEach(year => {
+    albumData[year].medias.sort((a, b) => {
+      if (a.exifDate && b.exifDate) return new Date(a.exifDate) - new Date(b.exifDate);
+      return 0;
+    });
+  });
+
+  Object.keys(albumData).forEach(year => {
+    log(`   [${year}] ${albumData[year].medias.length} médias`, 'ok');
+  });
+  log(`   Placés: ${placed} | Ignorés: ${skipped}`, 'done');
+
+  // 4. Sauvegarder dans JSONBin
+  log('\n4. Sauvegarde JSONBin...');
+  try {
+    const res = await fetch(JSONBIN_URL, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
+      body: JSON.stringify(albumData)
+    });
+    if (res.ok) log('   ✓ JSONBin mis à jour !', 'ok');
+    else log('   Erreur: ' + res.status + ' ' + await res.text(), 'err');
+  } catch(e) { log('Erreur: ' + e.message, 'err'); }
+
+  log('\n=== Terminé — ferme et supprime cette page ===', 'done');
+  document.getElementById('runBtn').disabled = false;
+}
+</script>
+</body>
+</html>
