@@ -988,7 +988,8 @@ function backToMoodChoice() {
 }
 
 async function submitJournal() {
-  const score = moodIsGood ? 'bien' : 'pas terrible';
+  const sliderEl = document.getElementById('moodSlider');
+  const score = sliderEl ? sliderEl.value : 5;
   const text = document.getElementById('journalText').value.trim();
   const now = new Date();
   const date = now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
@@ -996,7 +997,8 @@ async function submitJournal() {
 
   const tomorrow = document.getElementById('journalTomorrow').value.trim();
   const entry = {
-    mood: moodIsGood ? 'bien' : 'pas terrible',
+    mood: moodIsGood ? 'bien' : 'pas vraiment',
+    score: parseInt(score),
     text: text || '(rien écrit)',
     tomorrow: tomorrow || null,
     date,
@@ -1029,7 +1031,7 @@ async function submitJournal() {
     await emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, {
       date,
       heure,
-      score: moodIsGood ? 'bien' : 'pas terrible',
+      score: document.getElementById('moodSlider').value + '/10',
       reponse: (text || '(rien écrit)') + (tomorrow ? `
 
 Phrase pour demain : ${tomorrow}` : '')
@@ -1058,6 +1060,7 @@ Phrase pour demain : ${tomorrow}` : '')
 function resetJournalForm() {
   moodIsGood = null;
   document.getElementById('journalStepA').style.display = 'block';
+  document.getElementById('journalStepC').style.display = 'none';
   document.getElementById('journalStepB').style.display = 'none';
   document.getElementById('journalText').value = '';
   document.getElementById('journalTomorrow').value = '';
@@ -1087,7 +1090,7 @@ function renderJournalEntries() {
         <span>${e.date}</span>
         <span>${e.heure}</span>
       </div>
-      <div class="journal-entry-score" style="font-size:1rem;letter-spacing:0.05em;">${e.mood || (e.score >= 6 ? 'bien' : 'pas terrible')}</div>
+      <div class="journal-entry-score">${e.score ? e.score + '/10' : ''} <span style="font-size:0.8rem;color:var(--muted);">${e.mood || ''}</span></div>
       <div class="journal-entry-text">${e.text}</div>
       ${e.tomorrow ? `<div class="journal-entry-text" style="margin-top:0.75rem;color:var(--green);border-top:1px solid var(--sand);padding-top:0.75rem;">✦ ${e.tomorrow}</div>` : ''}
     </div>
